@@ -1,0 +1,21 @@
+use dusty_widget.txt;
+
+thing SwingMenuItem extends Widget {
+
+string java_class is "widget.swing.DJMenuItem";
+
+action SwingMenuItem takes String label gives ~ {
+	connect jc to java_class;
+	send "setlabel" to jc using label;
+	hook testListen to jc;
+	send "listen" to jc;
+	};
+
+action testListen takes string s gives ~ {
+say "received event from menu-item";
+say s;
+};
+
+};
+
+

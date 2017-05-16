@@ -1,0 +1,39 @@
+use dusty_widget.txt;
+
+thing GridPanel extends Widget
+	{
+	initialize jc;
+
+	action GridPanel takes integer rows, integer columns gives ~
+		{
+		connect jc to "widget.DGridPanel";
+		send "layout_vertical" to jc using rows;
+		send "layout_horizontal" to jc using columns;
+		};
+
+	action addWidget takes Thing widge, gives ~
+		{
+		if widge is type Widget
+			{
+			javaconnector j is widge.getJavaConnector;
+			/*say "j:"+j+" , jc:"+jc;*/
+			send j to jc;
+			};
+		};
+	action getJavaConnector takes ~ gives JavaConnector
+		{
+		give jc;
+		};
+	action setBackground takes string bkrnd, gives ~
+		{
+		send "setcolor" to jc using bkrnd;
+		};
+
+	action setBackground takes integer i, integer j, integer k gives ~ 
+		{
+		/*RGB must be 0-255*/
+		if (((i >= 0) & (i <= 255)) & ((j >= 0) & (j <= 255)) & ((k >= 0) & (k <=255)))
+	{send "setcolor" to jc using i, j, k;};
+	};
+
+	};

@@ -1,0 +1,39 @@
+use dusty_frame.txt;
+allow SwingMenuBar;
+
+thing SwingFrame extends Frame
+	{
+
+	string java_class is "widget.swing.DJFrame";
+
+	action SwingFrame takes String label, Widget content, yes_no coe gives ~
+		{
+		Frame using label, content, coe;
+		};
+	
+	
+	action SwingFrame takes String label, gives ~
+		{
+	        Frame using label;
+		};
+
+	action SwingFrame takes String label, Widget content gives ~
+		{
+		Frame using label, content;
+		};
+
+	action SwingFrame takes ~ gives ~
+		{
+		Frame using "";
+		};
+
+	action setMenuBar takes SwingMenuBar smb gives ~ 
+		{
+		javaconnector jsmb is smb.getJavaConnector;
+
+		send jsmb to jc; 
+		};
+		
+
+	};
+	

@@ -1,0 +1,31 @@
+
+thing AVTest
+{
+declare anyvar cpy;
+group grp contains anyvars;
+
+action AVTest takes ~ gives ~ {};
+
+action takeAny takes anyvar a gives ~
+	{
+	cpy is now a;
+	profile cpy;
+	grow grp by 1;
+	integer i is grp:size;
+	say "grp:size == "+i;
+	grp:i is now a;
+	say grp;
+	profile grp;
+	};
+	
+action getAny takes integer indx, gives anyvar
+	{
+	declare anyvar a;
+	if ((indx<1)|(indx>grp:size))
+		{say "Index Out Of Range!!";give;};
+	a is now grp:indx;
+	give a;
+	};
+	
+};
+

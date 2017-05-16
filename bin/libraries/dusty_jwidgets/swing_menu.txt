@@ -1,0 +1,26 @@
+use dusty_widget.txt;
+
+allow SwingMenuItem;
+
+thing SwingMenu extends Widget {
+
+	string java_class is "widget.swing.DJMenu";
+	
+	action SwingMenu takes string name gives ~
+		{
+		connect jc to java_class;
+		/*say "jc=="+jc;*/
+		send "setname" to jc using name;
+		};
+	
+	action addMenuItem takes SwingMenuItem smi gives ~ {
+	
+		javaconnector j is smi.getJavaConnector;
+		/*say j;*/
+		send j to jc;
+	};
+	
+	
+	
+	};
+	

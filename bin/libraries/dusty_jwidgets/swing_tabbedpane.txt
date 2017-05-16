@@ -1,0 +1,39 @@
+use dusty_widget.txt;
+
+thing SwingTabbedPane extends Widget {
+
+	string java_class is "widget.swing.DJTabbedPane";
+	action SwingTabbedPane takes ~ gives ~ {
+		connect jc to java_class;
+		};
+	
+	action addTab takes Widget w, String lab gives ~
+		{
+		javaconnector j is w.getJavaConnector;
+		send j to jc using add, lab;
+		};
+		
+	action removeTab takes Widget w, String lab gives ~
+		{
+		javaconnector j is w.getJavaConnector;
+		send j to jc using remove,lab;
+		};
+
+	action setOpaque takes ~ gives ~ {
+		setOpaque using yes;
+		};
+
+	action setOpaque takes yes_no yn gives ~ {
+		if (yn == yes) {
+			send "opaque" to jc;
+			}
+			else
+				{
+				send "~opaque" to jc;
+				};
+		};
+		
+	};
+
+	/*this component takes care of itself*/
+	

@@ -1,0 +1,14 @@
+use hiqpanel.txt;
+
+create HiQPanel gb;
+create BorderPanel bp;
+create Label somelabel using "This is the Hi-Q game";
+bp.addWidget using somelabel, "north";
+bp.addWidget using gb, "center";
+
+create Label otherlabel using "As a Demo!";
+bp.addWidget using otherlabel, "south";
+
+create Frame f using "I am Hi-Q", bp;
+f.setVisible;
+

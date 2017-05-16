@@ -1,0 +1,22 @@
+use dusty_hash.txt;
+
+create HashMap hm;
+integer x is 1;
+
+attempt the following {
+	
+forever
+      {
+	/*pause for .2 seconds;*/
+	string ky = "key:"+x;
+	string val = "value:"+x;
+	say "Putting ("+ky+")->("+val+")";
+	hm.put->ky,val;
+	x++;
+	};
+    }
+    catch{say the mistake; say "x is "+x;};
+say "pausing"; pause for 10 seconds; System.recoverMemory;
+hm.printHash;
+say "hm.size == " + hm.size;
+

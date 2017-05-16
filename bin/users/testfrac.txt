@@ -1,0 +1,3 @@
+create Fraction one using 1, 2;
+say one.reverseFraction;
+say one.inverseFraction;

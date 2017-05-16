@@ -1,0 +1,75 @@
+/*TextFields are single line text boxes (usually for entry)*/
+
+use dusty_widget.txt;
+
+thing TextField extends Widget
+	{
+	yes_no editable is yes;
+	String fieldvalue is "";
+	action TextField takes integer lngth, gives ~
+		{
+		connect jc to "widget.DTextField";
+		hook "setField" to jc;
+		send "setsize" to jc using lngth;
+		};
+
+	action TextField takes string val, gives ~
+		{
+		fieldvalue is now val;
+		connect jc to "widget.DTextField";
+		hook "setField" to jc;
+		send "tf_with_value" to jc using val;
+		};
+
+	action TextField takes string val, integer lngth, gives ~
+		{
+		fieldvalue is now val;
+		TextField using lngth;
+		send "settext" to jc using val;
+		};
+
+	action setField takes string contents, gives ~
+		{
+		fieldvalue is now contents;
+		};
+
+	action setText takes string text, gives ~
+		{
+		fieldvalue is now text;
+		send "settext" to jc using text;
+		};
+
+	action getText takes ~ gives String
+		{
+		send "sendtext" to jc;
+		give fieldvalue;
+		};
+
+	
+	action setEditable takes yes_no edit gives ~
+		{
+		if edit == yes {send "is_editable" to jc;}
+			else {send "not_editable" to jc;};
+		editable is now edit;
+		};
+
+	action isEditable takes ~ gives yes_no
+		{
+		give editable;
+		};
+
+	action setSendOnEnter takes yes_no soe gives ~
+		{
+		if soe == yes {send "send_on_enter" to jc;}
+			else {send "no_send_on_enter" to jc;};
+		};
+
+	action clearText takes ~ gives ~
+		{
+		send "settext" to jc using "";
+		};
+
+	};
+
+
+		

@@ -1,0 +1,224 @@
+use dusty_widgetry.txt;
+
+thing hiqengine implements ButtonListener{
+
+group gamespots contains groups;
+create Widget frm;
+create Widget _to;
+create Widget butt;
+yes_no playing is no;
+create Widget resp;
+declare thing hiqpan;
+
+action hiqengine takes Thing bu, Thing f, Thing t, Thing l, thing hqp, group gb gives ~
+	{
+	gamespots is now gb;
+	hiqpan is now hqp;
+	frm is now f;
+	_to is now t;
+	butt is now bu;
+	resp is now l;
+	};
+
+action play takes ~ gives ~
+	{
+	playing is now yes;
+	say "We are now playing";
+	butt.addButtonListener using me;
+	};
+
+	/*IMPLEMENT ButtonListener*/
+action buttonPressed takes string mssg, gives ~ {/*not used*/};
+	
+action buttonPressed takes Button b gives ~
+	{
+	/*we know this is our button*/
+
+	if (playing) {processMove;} else {startAgain;};	
+	butt.setEnabled using yes;
+	};
+	
+action listenToButton takes Button butt, gives ~ 
+{ /*we are listening to one button...this is inconsequential*/};
+/*END Interface*/
+
+
+action startAgain takes ~ gives ~
+	{
+	butt.setLabel using "Press to move";
+	hiqpan.resetBoard;
+	playing is now yes;
+	integer pc is hiqpan.countPegs;
+	String ngm is "The game starts with "+pc+" pegs";
+	resp.setText using ngm;
+	};
+
+action processMove takes ~ gives ~
+	{
+	String speak is "";
+	String move_from is frm.getText;
+	String move_to is _to.getText;
+	speak is now "Moved from "+move_from+" to "+move_to;
+	declare integer i;
+	declare integer j;
+	attempt the following
+	{
+	convert move_from into i;
+	convert move_to into j;
+	} and if it fails {j is now -1; i is now -1;};
+
+	yes_no valid is validMove using i, j;
+	if (-valid) {speak is now "Bad move";};
+	integer pc is hiqpan.countPegs;
+	speak is now speak + ", "+pc+" pegs left";
+	resp.setText using speak;
+	frm.setText using "";
+	_to.setText using "";
+
+	yes_no game_over is no;
+	if (pc <= 8)
+	       {
+	      butt.setEnabled using no;
+	      game_over is now yes;
+	       declare things pgs;
+	       pgs is now hiqpan.getRemainingPegs;
+	       yes_no te is yes;
+	       integer x is 1;
+	       as long as (te & (x <= pgs:size)) 
+		{
+		te is now hiqpan.surroundingBoardsEmpty using pgs:x;
+		if (-te) {game_over is now no;};
+		x++;
+		};
+	      }; 
+
+	if (game_over)
+	      {
+	      butt.setLabel using "Game over, press to play again";
+	      playing is now no;
+	      String rst is "You finished with "+pc+" pegs!";
+	      resp.setText using rst;
+	      }; 
+	butt.setEnabled using yes;
+	};
+
+action validMove takes integer fr, integer t, gives yes_no
+	{
+	yes_no yn is no;
+	integer k is 0;
+	integer midspot is 0;
+	if (fr > t) {k is now fr - t;} else {k is now t - fr;};
+	if ((k == 2) | (k == 20) | (k == 22) | (k==18) ) { 
+			   yn is now yes;
+			  };
+
+	if (k == 2)
+		{
+		if (fr > t)
+		      {
+		     midspot is now t + 1;
+		     }
+		    else {midspot is now t - 1;};
+		};
+
+	if (k == 20)
+		{
+		if (fr > t)
+		  {midspot is now t + 10;} else {midspot is now t - 10; };
+		};
+
+	if (k == 22)
+		{
+		if (fr > t)
+		    {midspot is now t + 11;} else {midspot is now t - 11;};
+		};
+
+	if (k == 18)
+		{
+		if (fr > t)
+		   {midspot is now t + 9;} else {midspot is now t - 9;};
+		};
+		    
+
+	declare thing fromspot;
+	declare thing tospot;
+	declare thing middlespot;
+
+	if (yn)
+	{
+	fromspot is now getBoardSpot using fr;
+	tospot is now getBoardSpot using t;	
+	middlespot is now getBoardSpot using midspot;
+	};
+
+
+	if (yn & (-fromspot is type GameBoard) | (-tospot is type GameBoard) | (-middlespot is type GameBoard)) {yn is now no;};
+
+	if (yn & (fromspot.isGutter | tospot.isGutter | middlespot.isGutter)) {yn is now no;};
+
+	if (yn & (fromspot.isEmpty | (-tospot.isEmpty) | middlespot.isEmpty)) {yn is now no;};
+
+	if (yn)  {
+	           fromspot.removePeg; 
+                              tospot.addPeg;
+	           middlespot.removePeg;
+                              };
+	give yn;
+	};
+
+
+action getBoardSpot takes integer where, gives thing
+	{
+	declare thing this_spot;
+	String spt is ""+where;
+	group g copies spt;
+	yes_no ok is yes;
+	if ( (g:size > 2) | (g:size < 1) )
+		{ok is now no;
+		};
+	integer x is -1;
+	integer y is -2;
+
+	if (ok)
+	    {
+	    try{
+	    convert g:1 into x;
+	    convert g:2 into y;
+	     } catch {x is now -1; y is now -1;};    
+	};
+
+	if ( (x > 7) | (x < 1) | (y > 7) | (y < 1) )
+		{
+		x is now -1; y is now -1;
+		ok is now no;
+		};
+
+	if (ok)
+	    {
+	    this_spot is now gamespots:x:y;
+	    };
+
+	give this_spot;
+		
+	};
+                  
+action makeInteger takes character c gives integer
+	{
+	integer ret is -1;
+	if (c == '0') {ret is now 0;};
+	if (c == '1') {ret is now 1;};
+	if (c == '2') {ret is now 2;};
+	if (c == '3') {ret is now 3;};
+	if (c == '4') {ret is now 4;};
+	if (c == '5') {ret is now 5;};
+	if (c == '6') {ret is now 6;};
+	if (c == '7') {ret is now 7;};
+	if (c == '8') {ret is now 8;};
+	if (c == '9') {ret is now 9;};
+	give ret;
+	};
+
+
+};
+
+	

@@ -1,0 +1,14 @@
+/*dusty_widgetry.txt*/
+
+/*use this when you want to include ALL Dusty-widgets.*/
+
+use dusty_widget.txt;
+use dusty_textwidgets.txt;
+use dusty_panels.txt;
+use dusty_frame.txt;
+use dusty_buttons.txt;
+use dusty_label.txt;
+use dusty_checkboxes.txt;
+use dusty_choicebox.txt;
+
+say "The dusty-widget library has loaded.";

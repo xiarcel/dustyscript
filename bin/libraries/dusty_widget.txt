@@ -1,0 +1,25 @@
+
+thing Widget {
+/*this is the base thing that all GUI things 'extend'... By assigning jc internally to a Dustyable...they are addable to Frame, etc..*/
+
+initialize jc;
+string java_class is "dscript.connect.Dustyable";
+
+action Widget takes ~ gives ~
+	{
+	/*constructor*/
+	};
+
+action getJavaConnector takes ~, gives javaconnector 
+	{
+	/*say "Widget getJavaConnector called";*/
+	give jc;
+	};
+
+};
+
+thing nonWidget{
+action nonWidget takes ~ gives ~ {};
+};
+
+

@@ -1,0 +1,44 @@
+
+thing ThreadAction
+{
+declare thread t;
+
+action ThreadAction takes ~ gives ~ {};
+
+action start takes ~ gives ~
+	{
+	thread as t {
+		forever
+			{
+			say "booyah";
+			pause for 4 seconds;
+			};
+		};
+	};
+
+action pauseThread takes ~ gives ~
+	{
+	hibernate t;
+	};
+
+action resume takes ~ gives ~
+	{
+	awaken t;
+	};
+
+action killThread takes ~ gives ~
+	{
+	kill t;
+	};
+
+action run takes ~ gives ~
+	{
+	start;
+	pause for 10 seconds;
+	pauseThread;
+	pause for 55 seconds;
+	resume;
+	pause for 2 minutes;
+	killThread;
+	};
+};

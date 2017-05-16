@@ -1,0 +1,27 @@
+
+/*CREDITS:
+All credits to Stefan Kolarov (Stephen Kolaroff) for work on JEPlite...the shrunk JEP parser
+Thanks to Nathan Funk (JEP project -- also on Sourceforge) for all of his assistance
+
+David Newman gets credit for the work (still in its infancy) of code beautification...
+	If it looks like shit, he hasn't gotten to it yet...
+
+Also...a great big thanks to:
+Stephen Blackheath, of the Grapevine project (also on Sourceforge), 
+For all of his encouragement, cheering, and basic 'being a sounding board' style of help...
+it was amazing to have such a valuable friend around when I needed it most..
+Recently, his help with a performance drag issue, and his overall assurances that the project is worthwhile, have come when I needed them to..and I am so very grateful.
+..plus.. his early work on "noughts and crosses" (tic-tac-toe) showed me what the language might be lacking... and allowed me to make it both more complex and simple simultaneously...
+
+To Danny Gordon,
+Future partner, future developer, great sound-board, and good friend.
+Thanks
+
+Credits to Yoann Jagoury for working on some bottlenecks...  
+
+William Alber, for the modified methods using StringBuffer (so I didn't have to do it myself), some code refactoring, and logic-checking.. as well as his interest in potentially becoming a developer on future interpreters for the language. 
+He has also made great strides in pulling implementation out of the Statement Processor's run() method... which will be invaluable in the future 'preprocessor'-mode Dustyscript work.
+
+*/
+
+

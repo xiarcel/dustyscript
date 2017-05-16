@@ -1,0 +1,470 @@
+<HTML>
+<TITLE>Dustyscript Language Specifications as of 6-27-2003 (Post-1.0 Release Candidate B &quot;CVS release&quot; )</TITLE>
+<CENTER><BR>This document is a work in progress<BR><I>Please note: Updates for this document can be found at:<BR><A HREF="http://dustyscript.sourceforge.net/langdoc.html">The dustyscript site</A></B></I><BR><B><I><FONT SIZE=+2>Dustyscript 1.0</FONT SIZE></I></B><BR>Language notes as of the 6-27-03 (Post-1.0.RCB-CVS) release</CENTER><BR><BR>
+<P>
+Briefly, there are five ways to test the current Dustyscript set of commands.<BR>
+<LI>Place your code in a text file, and then run (in "bin" dir) "java dscript.StatementProcessor FILENAME"</LI>
+<LI>Run (from "bin" dir) "java dscript.ConsoleDusty" and type it in interactively.</LI>
+<LI>Run (from "bin" dir) "java dscript.VisualShell" and type it in a Frame inter-actively</LI>
+<LI>Place code in text file, and run (in 'bin') "java dscript.VisualShell FILENAME"</LI><BR>
+OR..finally...<BR>
+<LI>Run (from "bin" dir) "java dscript.dde.DustyDevEnv" and use the Dustyscript IDE</LI>
+</P>
+<P>Instructions (and/or language rules) are as follows:</P>
+
+<P><B>Variable 'types'</B><BR>
+string (equivalent to a Java String)<BR>
+decimal (equivalent to a Java double)<BR>
+integer (equivalent to a Java long)-literals between " "<BR>
+character (equivalent to a Java char)-literals between ' '<BR>
+</P>
+<P>Special variable type: <B>anyvar</B><BR>
+anyvar<BR>
+***this var type is a generic, to allow a little more flexibility<BR>
+example:<BR>
+<B>action</B> someaction <B>takes anyvar</B> a<B>, gives ~ {</B>/*decide what to do*/<B>};</B><BR>
+</P>
+
+<P><B><I>Comments</I></B><BR>
+<B>/* </B><I>your comments go here and are ignored</I> <B>*/</B><BR>
+</P>
+
+<P><B>Assignment 'operators'</B><BR>
+<I>vartype</I> <I>varname</I> <B>is</B> <I>value</I><B>;</B><BR>
+<I>varname</I> <B>is now</B> <I>value</I><B>;</B><BR>
+<B>declare</B> <I>vartype</I> <I>varname</I><B>;</B><BR>
+<LI>this creates a variable with no value to be re-assigned</LI>
+<LI>'vartype' can be plural, and then it is a group</LI>
+<BR>
+<I>value</I> can be the <B>ask</B> operator, or any combination of already assigned variables or literals..  
+</P>
+<P><B>'String' operations...</B><BR>
+<B>integer</B> <I>varname</I> <B>is location of</B> <I>string-value</I> <B>in</B> <I>string-value</I><I> (optional:</I> <B>starting at</B> <I>integer-value</I><B>;</B><BR>
+<I>varname</I> <B>is now location of</B> <I>string-value</I> <B>in</B> <I>string-value</I> <I>(optional:</I> <B>starting at</B> <I>integer-value</I><B>;</B><BR>
+<I><B>stringvarname</B></I><B>:</B><I>integervalue</I><BR>
+<LI>represents a single character at location 'integervalue' in the string</LI><BR>
+<I><B>stringvarname</B></I><B>:size</B><BR>
+<LI>represents the length (in characters) of the string</LI>
+<LI>this means that the 'string' type behaves like a group of characters</LI>
+<BR>
+<B><I>stringvarname</I>:</B><I>integer</I> <B>is now</B> <I>character</I><B>;</B><BR>
+<LI>The string var will change the character at the location specified by the 'integer' to 'character'</LI><BR>
+</P>
+<P><B>Removing a variable</B><BR>
+<B>destroy</B> <I>varname</I><B>;</B><BR>
+<B>remove</B> <I>varname</I><B>;</B><BR>
+<LI>**Handle with extreme care!</LI><BR></P>
+
+<P>
+
+<B>Special 'assignment'::Array-like type called 'Group'</B><BR>
+<B>group</B> <I>varname</I> <B>contains</B> <I>integer-value</I> <I>vartype-plural</I><B>;</B><BR>
+<BR>this creates a group(array) called <I>varname</I> with <I>integer-value</I> members<BR>
+<I>vartype-plural</I> would be "integers", "strings", "decimals", "yes_nos"<BR><BR>
+Each member is initialized as follows:<BR>
+<I>varname</I><B>:</B><I>integer-value</I> <B>is now</B> <I>value</I><B>;</B><BR>or<BR>
+<I>varname</I><B>:</B><I>integer-value</I> <B>is now</B> <B>ask;</B><BR><BR>
+'group' works OK with count<BR>
+<I><B>group</B></I> can be passed to and from <B><I>actions</I></B><BR>
+</P>
+<P>
+<B>Group <I>operations</I></B><BR>
+<B>grow</B> <I>groupname</I> <B>by</B> <B><I>integer</I>;</B><BR>
+<B>shrink</B> <I>groupname</I> <B>by</B> <B><I>integer</I>;</B><BR>
+<I>groupname</I><B>:size</B> ((an integer representing the size))<BR>
+<I>groupname</I><B>:last</B><BR>
+**this represents the last member of the group**<BR>
+<BR>
+***<I>Groups can contain Groups</I>***<BR>
+</P>
+<P><B>The <I>copies</I> commands</B><BR>
+<I>vartype varname</I> <B>copies</B> <I>value</I><BR>
+<I>varname</I> <B>copies</B> <I>value</I><BR>
+<LI><I>value</I> can be a variable or literal<BR>
+</P>
+
+<P><B>Special 'group' capabilities</B><BR>
+<LI>support added for [ ] indexing in groups.</LI>
+<LI>The square brackets [ ] can contain any integer 'statement', such as:<BR>
+<I>mygroup</I><B>[</B><I>myint</I> <B>+</B> 1<B>] is now </B> ... <B>;</B><BR>
+<I>mygroup</I><B>[</B><I>myAction </I><B>using</B><I> var1, var2, var3</I><B>] is now </B> ... <B>;</B><BR>
+**'myAction' must, naturally, give an integer<BR>
+**The following expression "mygroup[myint++]" will not work<BR>
+</P>
+
+
+<P>
+<B>Console out/in operators</B><BR>
+<B>say</B> <I>varname</I>;<BR>
+<B>say</B> <I>literal</I>;<BR>
+<B>say</B> <I>literal</I> <B>+</B> <I>varname</I> <B>+</B> ....;<BR>
+***outputs to the console***<BR>
+<I><B>vartype</B> varname</I> <B>is</B> <B>ask;</B><BR>
+<I>varname</I> <B>is now</B> <B>ask;</B> /*when var is already assigned*/<BR>
+<B>ask for </B><I><B>vartype</B></I> <I>varname</I><B>;</B><BR>
+<B>ask for </B><I>varname</I><B>;</B>   /*when var is already assigned*/<BR>
+***assigns the input to <I>varname</I>***<BR>
+</P>
+<P>
+<B>'Mathematical' operators</B><BR>
+<B>+</B>, <B>plus</B> for addition and string-concat.<BR>
+<B>-</B>, <B>minus</B> for subtraction(mathematical).<BR>
+<B>*</B>, <B>times</B>, <B>multiplied by</B> for multiplication (**special)<BR>
+<B>/</B>, <B>over</B>, <B>divided by</B> for division (**special)<BR>
+<BR>
+<LI>multiplication and division:<B>wrap all complex math in parentheses:</B><BR><I>vartype varname</I> <B>is (</B><I>math expression</I><B>);</B><BR>
+<LI>Also, wrap any math in ( ) for <B><I>comparator</I></B> functions<BR>
+<B>if</B> (2+1) <B>is equal to</B> (1+2) <B>{say </B>"Associative"<B>;};</B><BR>
+</P>
+
+</P>
+<P><B>Special operator(s)</B><BR>
+<B>pause for</B> <I>integer-literal</I> <B>seconds</B>;<BR>
+<B>pause for</B> <I>integer-literal</I> <B>minutes</B>;<BR>
+<B>pause for</B> <I>integer-variable</I> <B>seconds|minutes</B><BR>
+<BR>
+<B>count from</B> <I>integer</I> <B>through</B> <I>integer</I> <B>{</B><I>..code block</I><B>};</B><BR>
+<B>count using </B> <I>name-for-var</I> <B>from</B> <I>integer</I> <B>through</B> <I>integer</I> <B>{</B><I>..code block</I><B>};</B><BR>
+</P>
+<P>
+<B>Action prototyping</B><BR>
+<B>action</B> <I>action-name</I> <B>takes</B> <I>var-type var-name, ...., </I> <B>gives </B><I>vartype</I> <BR><B>{</B><I>Method body**</I><B>};</B><BR>
+** gives either is a var-type, or ~ for void.<BR>
+** the action-body must end (inside) with a give statement:<BR>
+<B>give </B><I>return-var</I><B>;</B><BR>
+<B>give </B><I>return-literal</I><B>;</B><BR>
+<B>give ~;</B>  /*optional*/<BR>
+** a 'give' in the action-body skips to the last give statement in the action**<BR>
+<LI><B><I>actions</I></B> <I>can have the same <B>action-name</B> as long as their return type or args-types are different</I><BR>
+<LI><B><I>actions</I></B> can <I>take</I> and <I>give</I> using the 'thing-type' name rather than just thing, such as:<BR>
+<B>action <I>action-name</I> takes <I>thing-type</I> </B><I> varname</I> <B>gives <I>other-thing-type</I> {</B>/*BODY*/<B>};</B><BR>
+<LI>An action will  match the type through all of its ancestors, from specific to general</LI>
+<LI>An action will match on interfaces (see below) as well</LI></P>
+
+<P><B>Assignment using an action</B><BR>
+<I>vartype varname</I> <B>is</B> <I>action-name</I> <B>using</B> <I>arguments</I><B>;</B><BR>
+ie "integer i is add using 1, 2;"<BR>
+</P>
+
+<P><B><I>Compound</I> action statements</B><BR>
+<I>vartype varname</I> <B>is</B> <I>action-name</I> <B>using</B> <I>args</I> <B>+</B> ..... <B>+</B> <I>action-name</I> <B>using</B> <I>args</I><B>;</B><BR>
+<I>varname</I> <B>is now</B> <I>action-name</I> <B>using</B> <I>args</I> <B>+</B> ..... <B>+</B> <I>action-name</I> <B>using</B> <I>args</I><B>;</B><BR>
+<B>say</B> <I>action-name</I> <B>using</B> <I>args</I> <B>+</B> ..... <B>+</B> <I>action-name</I> <B>using</B> <I>args</I><B>;</B><BR>
+<LI><I>args</I> is short for arguments<BR>
+<LI><I><B>action-name</B></I> must have a return value (not <B>~</B>)<BR>
+</P>
+
+
+<P><B>Control-flow::special::</B> <I>(Works for 'count' and 'as_long_as')</I><BR>
+<B>break;</B><BR>
+**breaks to outside of a loop<BR>
+<B>next;</B><BR>
+**skips the current loop-code, and re-evaluates<BR>
+</P>
+
+<P>
+<B>Comparator statements</B><BR>
+<B>if</B> <I>value</I> <I><B>comparator</I></B> <I>value</I> <B>{</B>Block of Code<B>};</B><BR>
+<B>if</B> <I>value</I> <I><B>comparator</I></B> <I>value</I> <B>{</B>Block of Code<B>} else {</B>Block of Code<B>};</B><BR>
+<B>if (</B><I>value</I> <I><B>comparator</I></B> <I>value</I><B>) {</B>Block of Code<B>};</B><BR>
+<B>if (</B><I>value</I> <I><B>comparator</I></B> <I>value</I><B>) {</B>Block of Code<B>} else {</B>Block of Code<B>};</B><BR>
+
+<BR>
+<B>Comparator Loops</B><BR>
+<B>as long as</B> <I>value</I> <I><B>comparator</I></B> <I>value</I> <B>{</B>Block of Code<B>};</B><BR>
+<B>as long as (</B><I>value</I> <I><B>comparator</I></B> <I>value</I><B>) {</B>Block of Code<B>};</B><BR>
+**See "break" and "skip" above for control-flow**<BR>
+<BR>* 'value' refers to a varname or literal... 'comparator' refers to a comparator phrase or symbol from the list below<BR>
+<BR>
+(new)<B>More complex comparator statements</B><BR>
+<B><I>keyword</I></B> <B>(</B><I>value</I> <B><I>comparator</I></B> <I>value</I> <B><I>comparator</I></B> .. <I>value</I><B>)</B> <B>{</B>Code-block<B>};</B><BR>
+<LI>where 'keyword' refers to either 'if' or 'as long as'<BR>
+<LI>if you have multiple levels of complex comparisons, wrap the entire expression in ()<BR>
+example: <B>if (yes & no) | yes</B> <I>should be</I> <B>if ((yes & no) | yes)</B> <I>for proper evaluation</I><BR> 
+
+</P>
+
+
+<P>
+<B>Comparators (list)</B><BR>
+<LI>newest<BR>
+<B>&</B>  ,  <B>&&</B>  ,  <B>and</B>  /*if <I>this is true</I> <B>and</B> <I>that is true</I>*/<BR>
+<B>|</B>  ,  <B>||</B>  ,  <B>or</B>  /*if <I>this is true</I> <B>or</B> <I>that is true</I>*/<BR>  
+<LI>older<BR>
+<B>==</B>   ,   <B>is equal to</B><BR>
+<B>!=</B>   ,   <B>is not equal to</B> ,   <B>does not equal</B><BR>
+<B>></B>   ,   <B>is greater than</B><BR>
+<B>>=</B>   ,   <B>is greater than or equal to</B><BR>
+<B><</B>  ,   <B>is less than</B><BR>
+<B><=</B>   ,   <B>is less than or equal to</B><BR>
+<B>contains</B>     <I>/*this is for strings mainly*/</I><BR>
+<B>does not contain</B>     <I>/*this is for strings mainly*/</I><BR>
+</P>
+<P>
+<I>Special</I> <B>Comparators</B> (list)<BR>
+<B>is a</B>   ,   <B>is an</B>   ,   used in conjunction with a var-type<BR>
+<B>is not a</B>   ,   <B>is not an</B>   ,   used in conjunction with a var-type<BR>
+examples:<BR>
+<B>if</B> somevar <B>is a</B> <B><I>decimal</I> {</B>/*do something*/<B>};</B><BR>
+<B>if</B> somevar <B>is not a</B> <B><I>string</I> {</B>/*do something*/<B>};</B><BR>
+</P>   
+
+<P>
+
+<B>Including another Dustyscript program file</B><BR>
+<B>use</B> <I>FILENAME</I><B>;</B><BR>
+**this will load and run <I>FILENAME</I>, retaining all actions and variables assigned <BR>(like a C 'include' or Java 'import')<BR>
+</P>
+<P><B>
+File operations within a Dustyscript program</B><BR>
+<B>load</B> <I>string-var</I> <B>from</B> <I>string-value</I><B>;</B><BR>
+<B>save</B> <I>string-value</I> <B>to</B> <I>string-value</I><B>;</B><BR>
+<LI>the last 'value' always represents the filename
+<LI>files stored in ./users/data<BR>
+</P>
+
+<P>
+<B><I>"Threads"</I></B>(multi-tasking)<B> in Dustyscript</B><BR>
+<B>run separately {</B>Code Block<B>};</B><BR>
+<B>do separately {</B>Code Block<B>};</B><BR>
+<B>thread {</B>Code Block<B>};</B><BR>
+***any of the above will run the block of code in a separate "thread"***<BR>
+<B>thread as</B> <I>varname</I> <B>{</B>/*code block*/<B>};</B><BR>
+**creates a variable of type "thread"... the following can be done with this var**<BR>
+<B>hibernate</B> <I>varname</I><B>;</B><BR>
+<B>sleep</B> <I>varname</I><B>;</B><BR>
+**pause this thread until it is woken up<BR>
+<B>awaken</B> <I>varname</I><B>;</B><BR>
+**wake up a paused thread, will resume where it left off<BR>
+<B>kill</B> <I>varname</I><B>;</B><BR>
+**entirely stop this thread<BR>
+<B>resurrect</B> <I>varname</I><B>;</B><BR>
+<B>restart</B> <I>varname</I><B>;</B><BR>
+**restart this thread from the beginning
+<BR></P>
+<P>
+<B>The 'thing' type</B><BR>
+<B>thing type</B> <I>thingtype-name</I> <B>{</B>Block of code<B>};</B><BR>
+<B>thing</B> <I>thingtype-name</I> <B>{</B>Block of Code<B>};</B>
+<LI> 'block of code' needs to contain one action with the thingtype-name that gives ~<BR>
+<LI> the above is called a 'constructor'<BR>
+<BR>
+<B>Creating a 'thing' from a thing-type</B> <BR>
+<B>create</B> <I>thingtype</I> <I>varname</I> <B>using</B> <I>...args...</I> <B>;</B><BR>
+<BR><B>Accessing a thing's actions</B>
+<LI>demonstrated using a non-assignment action</LI><BR>
+<I>thingname</I><B>.</B><I>action-name</I> <B>using</B> <I>...args...</I><B>;</B><BR>
+</P>
+<P>
+<B>Descending from, or inheriting actions from, another Thing</B><BR>
+<B>thing type </B><I>thing-type-name</I> <B>extends</B> <B><I>predefined-thingtype</I>{</B>code-block<B>};</B><BR>
+<B>thing type </B><I>thing-type-name</I> <B>descends from</B> <B><I>predefined-thingtype</I>{</B>code-block<B>};</B><BR>
+<B>thing type </B><I>thing-type-name</I> <B>is a child of</B> <B><I>predefined-thingtype</I>{</B>code-block<B>};</B><BR>
+</P>
+<P>
+<B>Advanced &quot;Thing-Type&quot; issues</B>: <I>Interfaces</I> and <I>'allow'</I><BR>
+<LI>An interface is something which specifies what actions a thing that 'implements' it <b>will have</b></LI>
+<LI>There is no <i>body</i> to the actions defined</LI>
+<LI>All 'args' and 'gives' types must match explicitly:<BR>
+**An action which takes a &quot;MyThingType&quot; defined in an interface will not be considered matched<BR>
+by an action in the implementor that takes Thing<BR>
+Examples:<BR>
+<b>interface</b> <i>Example</i><b> {</b><BR>
+<b>action</b> add <b>takes integer</b> i, <b>integer </b>j <b>gives integer;</b><BR>
+<b>};</b><BR>
+<b>thing</b> MyThing <b>implements</b> Example <b>{</b><BR>
+<b>action</b> MyThing <b>takes ~ gives ~ {};</b><BR>
+<b>action</b> add <b>takes integer </b>one, <b>integer </b>two <b>gives integer {integer </b>three <b>is </b>one <b>+</b> two <b>; give </b> three<b>;};</b><BR>
+<b>};</b><BR>
+<LI>A thing can implement any number of interfaces</LI>
+<LI>Things are assumed to implement the interfaces implemented by the thing they extend</LI>
+<LI>The following is acceptable:<BR>
+<b>thing</b> MyThing <b>extends</b> MyOtherThing <b>implements</b> InterfaceOne, InterfaceTwo, InterfaceThree <BR><b>{</b>**BODY**<b>};</b><BR>
+<LI>A special keyword <b>allow</b> is provided for circular definitions.. where, for example:<BR> thing 'one' has an action that takes a 'two', and thing 'two' has an action that takes a 'one'. <BR>
+<B>allow</B> word_one, word_two, word_three<b>;</b><BR>
+<LI>'word_one', 'word_two' and 'word_three' will now be treated as defined for the purpose of action/thing creation</LI>
+<LI>Even though it is <b>not</b> acceptable to &quot;extend&quot; a thing that is not yet defined,<BR> you can 'implement' such an interface and you can use either an undefined thing-type or interface to create an action</LI>
+<LI>A thing can reference its own type in one of its actions</LI>
+</P>
+
+<P>
+<B>'Referring to' vs. 'Copying' a thing</B><BR>
+<B>thing </B><I>thingname</I> <B>refers to</B> <I>other-thingname</I><B>;</B><BR>
+<B>thing </B><I>thingname</I> <B>is</B> <I>other-thingname</I><B>;</B><BR>
+<LI><I>thingname</I> is another way to get at <I>other-thingname</I><BR>
+<LI>changes to one will affect the other</LI><BR>
+<B>thing</B> <I>thingname</I> <B>copies</B> <I>other-thingname</I><B>;</B><BR>
+<LI><I>thingname</I> is a copy of <I>other-thingname</I><BR>
+<LI>changes made to one will NOT affect the other</LI><BR>
+<BR><B>A 'Thing' referring to itself</B><BR>
+<B>me</B><BR>
+<B>this</B><BR>
+<LI>example: "<B><I>someThing.someAction</I></B> <B>using me;</B>"</LI><BR>
+<BR><B>Checking a 'thing' type, and 'thing' comparisons</B><BR>
+<B>if</B> <I>thing-var</I> <B>is type</B> <B><I>thing-type</I> {</B>Code Block<B>};</B><BR>
+<LI>the &quot;is type&quot; comparator works with interfaces (new, above) as well</LI>
+<B><I>comparisons using </I>==, != , is identical to</B>
+<LI>equality of things is when they are the same 'thing' with different variable names</LI>
+<LI><B>is identical to</B> compares things deeply, and if they are equivalent, is true</LI>
+<LI>use the same basic 'if' structure to check these:</LI>
+<LI><B>if</B> <I>value</I> <I><B>comparator</I></B> <I>value</I> <B>{</B>Block of Code<B>} else {</B>Block of Code<B>};</B></LI>
+<BR><BR>
+<B>Global blocks</B> <I>(Within things)</I><BR>
+<B>global {</B>/*code block*/<B>};</B><BR>
+***this creates a set of actions and variables that are accessible
+from the ThingType, without creating a Thing of that type.<BR>
+<LI>Variables created this way are shared by all things of this type</LI>
+<LI>Variables created this way are shared by all descendants
+<I>(Unless changed by the descendant)</I></LI>
+<LI>Variables and Actions created this way can only be changed (over-ridden)
+by ones inside of a global block, or they will fail<BR>
+<BR>
+email <A HREF="mailto:xiarcel@prodigy.net">Dave</A> if you need help!<BR>
+</P>
+</B>
+<B><I>Highly complicated: JavaConnector interface</I></B>
+<P><B>JavaConnector</B><BR>
+<B>initialize</B> <I>varname</I><B>;</B><BR>
+<B>connect</B> <I>varname</I> <B>to</B> <B><I>"package.classname"</I></B><B>;</B><BR>
+<B>hook</B> <B><I>"action-name"</I></B> <B>to</B> <I>varname</I><B>;</B><BR>
+<B>send</B> <B><I>string-value</I></B> <B>to</B> <I>varname</I><B>;</B><BR>
+<B>send</B> <B><I>string-value</I></B> <B>to</B> <I>varname</I> <B>using</B> <B><I>ARGS</I></B> ... <B>;</B><BR>
+<B>send</B> <B><I>javaconnector-var</I></B> <B>to</B> <I>varname</I><B>;</B><BR>
+<B>send</B> <B><I>javaconnector-var</I></B> <B>to</B> <I>varname</I> <B>using</B> <B><I>ARGS</I></B> ... <B>;</B><BR>
+<B>sendvar</B> <B><I>regular-var</I></B> <B>to</B> <I>varname</I><B>;</B><BR>
+<B>sendvar</B> <B><I>regular-var</I></B> <B>to</B> <I>varname</I> <B>using</B> <B><I>ARGS</I></B> ... <B>;</B><BR>
+
+<B>getvar</B> <B><I>regular-var</I></B> <B>to</B> <I>varname</I><B>;</B><BR>
+<B>getvar</B> <B><I>regular-var</I></B> <B>to</B> <I>varname</I> <B>using</B> <B><I>ARGS</I></B> ... <B>;</B><BR><BR>
+<CENTER><B>**There exists a demonstration of javaconnector: a "widget" library**<BR>
+</B>I will <I>try</I> to write some documentation for this shortly<BR>
+</CENTER>
+
+<BR><B>Debugging features</B><BR>
+<B>dump;</B><BR>
+<B>dump to <I>dump-value</I>;</B><BR>
+<LI>dump-value can be "std_out", "error", "debug", or "java_err_out"</LI>
+<BR>
+<B>profile</B> <I>varname</I><B>;</B><BR>
+<B>profile</B> <I>varname</I> <B>to</B> <B><I>dump-value</I>;</B><BR>
+<B>profile</B> <I>action-name</I><B>;</B><BR>
+<B>profile</B> <I>action-name</I> <B>to</B> <B><I>dump-value</I></B><B>;</B><BR>
+<B>profile</B> <I>thing-type</I><B>;</B><BR>
+<B>profile</B> <I>thing-type</I> <B>to</B> <B><I>dump-value</I></B><B>;</B><BR>
+<B>benchmark using</B> <I>decimal-varname</I> <B>{</B>/*code-block*/<B>};</B><BR>
+***if 'decimal-varname' is unassigned, it will be a decimal.<BR>
+***if 'decimal-varname' is assigned, it needs to be a decimal.<BR>
+***the result is a decimal representing seconds elapsed while running the code-block<BR>
+<BR>
+</P>
+<P>
+<B>Attempt code-blocks</B><BR>
+<B>attempt the following {</B>Block of Code<B>} and if it fails {</B>Block of Code<B>};</B><BR>
+<B>try {</B>Block of Code<B>} catch {</B>Block of Code<B>};</B><BR>
+
+<LI>If the entire statement inside the first code-block doesn't run, the second block runs</LI><BR>
+
+<B>fail;</B><BR>
+<B>fail with </B><I>value</I><B>;</B><BR>
+<LI>to force a fail.</LI><BR>
+<B><I>the mistake</I></B><BR>
+<LI>dustyscript assigned error-code (see below)</LI><BR>
+<B><I>what went wrong</I></B>
+<LI>represents the value assigned by a 'fail with' within the 'and if it fails' block</LI>
+<LI>pseudo-code example follows:</LI><BR><BR>
+<B>attempt the following<BR>
+{</B><BR>
+<I>do something</I><BR>
+<I>do something else</I><BR>
+<B>if <I>some_status_is_bad</I> {fail;};</B><BR>
+<I>do another something</I><BR>
+<I>finish this statement off</I><BR>
+<B>}<BR>
+and if it fails<BR>
+{</B><BR>
+<I>do something as a backup</I><BR>
+<B>};</B><BR>
+</P>
+<P>
+<B>Error catching with <I>attempt blocks</I></B><BR>
+<LI>Wrapping any statement in an 'attempt':'and..' block causes automatic error-catching</LI>
+<LI>Dustyscript will assign 'the mistake' as one (or more) of the below 'error codes'</LI>
+<LI>Dustyscript will assign 'what went wrong' as what would have been its error output</LI>
+<LI>This automatic error catching is <B>not a substitute</B> for <I>good programming</I>!</LI><BR>
+</P>
+<P>
+<B>The automatic 'attempt block' error codes</B><BR>
+SAY<BR>
+ASK<BR>
+ASSIGN<BR>
+COUNT<BR>
+IF<BR>
+<LI>'if' or 'as long as'<BR>
+IF-BLOCK<BR>
+<LI>as yet unused, I think<BR>
+ACTION<BR>
+THING-TYPE<BR>
+<LI>when creating a new 'thing type'<BR>
+THING<BR>
+<LI>when creating a thing from a 'thing type'<BR>
+JAVA-CONNECTOR<BR>
+<LI>any operations relating to the JavaConnector type</BR>
+</P>
+<P>
+<BR>
+<CENTER>Any questions, whatsoever, on <B><I>javaconnector</I></B>, <B><I>things</I></B>,
+<B><I>complex 'if' statements</I></B>, <B><I>profiles</I></B>, <B><I>attempt</I></B>,
+or any other Dustyscript feature should be posed to:<BR> 
+<A HREF="mailto:dustyscript-devel@lists.sourceforge.net">The Dustyscript List</A>
+</CENTER>
+<BR>
+
+</P>
+
+<P>
+<B>The <I>ConsoleDusty</I> functions</B><BR>
+:q  for quit<BR>
+:load>{filename} to load source<BR>
+:save>{filename} to save source<BR>
+:clear  clears variable table, and source<BR>
+:code   lists already executed statements<BR>
+:quiet   turns non-error debugging off (or on, depending on current state)<BR>
+:l     Lists the variables, and their values<BR>
+:run   runs source in memory<BR>
+:r     resets variable table, leaves source intact<BR>
+:?     lists help<BR>
+:benchmark    turns StatementProcessor's benchmark on (or off)<BR>
+</P>
+<P>
+<B>Basic rules</B><BR>
+<LI>Dustyscript requires a ; at the end of statements.</LI>
+<LI>Bracketed statements should be followed with a ;</LI>
+<LI>Re-assignment must be done with <B>is now</B></LI>
+<LI>Dustyscript does not accept a " character within ""</LI>
+</P>
+<P>
+<B>Sample "HelloWorld", Dustyscript style</B><BR>
+say "HelloWorld";<BR>
+</P>
+<P><B>Sample Dustyscript program</B><BR>
+say "Hello, World.";<BR>
+say "Who are you?";<BR>
+string s is ask;<BR>
+say "Hello, "+s+", how are you doing?";<BR>
+string a is ask;<BR>
+say "Wow, "+s+", I am glad you are doing "+a;<BR>
+say "Thanks for playing!";<BR>
+</P>
+<BR>
+Special thanks to:<BR>
+Stephen Kolaroff (for JEPlite), William Alber(for optimization) and Stephen Blackheath(for mentoring)<BR>
+<BR>
+<BR>
+Please direct any questions or comments to <A HREF="mailto:xiarcel@users.sourceforge.net">Dave</A><BR><CENTER>~Xiarcel</CENTER>
+
+<!This document is taken from the sourceforge docs!>
+</HTML>
+
+
+
+

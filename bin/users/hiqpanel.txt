@@ -1,0 +1,306 @@
+use gameboard.txt;
+
+thing HiQPanel extends Widget
+{
+create GridPanel panel using 8, 8;
+group vertical contains groups;
+group vert_labs contains 7 things;
+group hor_labs contains 8 things;
+yes_no DEBUG is no;
+
+action HiQPanel takes ~ gives ~
+	{
+	setBoard;
+	if (DEBUG) {say "setBoard";};
+	count using x from 1 through 8
+		{
+		panel.addWidget using hor_labs:x;
+		};
+
+	count using x from 7 through 1
+		{
+		panel.addWidget using vert_labs:x;
+		count using y from 1 through 7
+			{
+	
+			
+			panel.addWidget using vertical:x:y;
+	
+
+			};
+		};
+	};
+
+
+action setBoard takes ~ gives ~
+{
+grow vertical by 7;
+if (DEBUG) {say "grow vertical";};
+count using x from 1 through vertical:size
+	{
+	vertical:x contains 7 things;
+	if (DEBUG) {say "vertical:"+x+":size="+vertical:x:size};
+	};
+if (DEBUG) {say "vertical:x contains 7 things";
+};
+count using x from 1 through 2
+	{
+	if (DEBUG) {say "x is "+x;};
+	count using y from 1 through 2
+		{
+		if (DEBUG) {say "y is "+y;};
+		create Gutter g;
+		if (DEBUG) {say "Gutter g";};
+		vertical:x:y is now g;
+		if (DEBUG) {say "created Gutter g for vertical:"+x+":"+y;};		
+		};
+	
+	count using y from 6 through 7
+		{
+		create Gutter g;
+		vertical:x:y is now g;
+		
+		};
+	};
+if (DEBUG) {say "Created gutters";};
+count using x from 6 through 7
+	{
+	count using y from 1 through 2
+		{
+		create Gutter g;
+		vertical:x:y is now g;
+		
+		};
+	count using y from 6 through 7
+		{
+		create Gutter g;
+		vertical:x:y is now g;
+		
+		};
+	};
+
+yes_no odd is yes;
+count using x from 1 through 7
+	{
+	count using y from 3 through 5
+		{
+		integer m is 1;
+		if (-odd) {m is now 2;};
+		create GameBoard gb using m;
+		gb.addPeg;
+		vertical:x:y is now gb;
+		
+		odd is now -odd;
+		};
+	};
+odd is now no;
+count using x from 3 through 5
+	{
+	 odd is now -odd;
+	count using y from 1 through 2
+		{
+		integer m is 1;
+		if (-odd) {m is now 2;};
+		create GameBoard gb using m;
+		gb.addPeg;
+		vertical:x:y is now gb;
+			
+		odd is now -odd;
+		};
+	odd is now -odd;
+	count using y from 6 through 7
+		{
+		integer m is 1;
+		if (-odd) {m is now 2;};
+		create GameBoard gb using m;
+		gb.addPeg;
+		vertical:x:y is now gb;
+			
+		odd is now -odd;
+		};
+	odd is now -odd; 
+	};
+
+vertical:4:4.removePeg using ~;	
+
+count using x from 1 through 8
+	{
+	integer b is x - 1;
+	String numlab is " -"+b+"-";
+	if (b == 0) {numlab is now "---";};
+	create Label lab using numlab;
+	create SinglePanel sp using lab;
+	hor_labs:x is now lab;
+	};
+count using x from 1 through 7
+	{
+	String numlab is "  -"+x+"-";
+	create Label lab using numlab;
+	create SinglePanel sp using lab;
+	vert_labs:x is now sp;
+	};
+	 
+
+};
+
+action createEndGame takes ~ gives ~
+	{
+	count using x from 1 through 7
+		{
+		count using y from 1 through 7
+			{
+			vertical:x:y.removePeg;
+			};
+		};
+	ncount from 10 through 1
+		{
+		yes_no put is no;
+		
+		as long as put == no
+			{
+			integer a is r_int from 1 through 7;
+			integer b is r_int from 1 through 7;
+			if (vertical:a:b.isEmpty & -vertical:a:b.isGutter)
+				{
+				vertical:a:b.addPeg;
+				put is now yes;
+				};
+			};
+
+		};
+	};
+	
+action getJavaConnector takes ~ gives JavaConnector
+	{
+	
+	javaconnector j is panel.getJavaConnector;
+	
+	give j;
+	};
+
+action getGameBoard takes ~ gives group
+	{
+	give vertical;
+	};
+
+action getPanel takes ~ gives thing
+	{
+	give panel;
+	};
+
+action resetBoard takes ~ gives ~
+	{
+	count using x from 1 through vertical:size
+		{
+		count using y from 1 through vertical:x:size
+			{
+			vertical:x:y.addPeg;
+			};
+		};
+	vertical:4:4.removePeg;
+	};
+
+action countPegs takes ~ gives integer
+	{
+	integer cnt is 0;
+	count using x from 1 through vertical:size
+		{
+		count using y from 1 through vertical:x:size
+			{
+			yes_no ie is vertical:x:y.isEmpty;
+			if (-ie)
+				{
+				cnt++;
+				};
+			};
+		};
+	give cnt;
+	};
+
+
+action getRemainingPegs takes ~ gives group
+	{
+	declare things pegspots;
+	count using x from 1 through 7
+		{
+		count using y from 1 through 7
+			{
+			yes_no ie is vertical:x:y.isEmpty;
+			
+			if (-ie)
+				{
+				create PegData pd using vertical:x:y, x, y;
+				grow pegspots by 1;
+				integer ix is pegspots:size;
+				pegspots:ix is now pd;
+				};
+			};
+		};
+	give pegspots;
+	};
+
+action surroundingBoardsEmpty takes thing pegdat gives yes_no
+	{
+	yes_no ret is no;
+	integer x_ref is 0;
+	integer y_ref is 0;
+	x_ref is now pegdat.getX;
+	y_ref is now pegdat.getY;
+	thing brd is pegdat.getSpot;
+	integer p is -1;
+	attempt the following {
+		ret is now yes;
+		count using x from p through 1
+			{
+			integer t_x is -1;
+			t_x is now x_ref + x;
+			count using y from p through 1
+				{	
+				integer t_y is -1; 
+				t_y is now y_ref + y;
+				if ((x_ref != t_x) | (y_ref != t_y)) 
+				   {
+				   if ((t_x > 0) & (t_x < 8) & (t_y > 0) & (t_y < 8)) 
+					{
+					yes_no vyn is vertical:t_x:t_y.isEmpty;
+					if ((-vyn) & -(vertical:t_x:t_y is_type Gutter )) {ret is now no; 
+					              };
+					};
+				   };
+			                 };
+			};
+		      } and if it fails {ret is now no;};
+	give ret;
+	};			
+					
+};
+
+thing PegData {
+
+declare thing board;
+declare integer _x;
+declare integer _y;
+
+action PegData takes thing bd, integer x, integer y, gives ~
+	{
+	board is now bd;
+	_x is now x;
+	_y is now y;
+	};
+
+action getSpot takes ~ gives thing
+	{
+	give board;
+	};
+
+action getX takes ~ gives integer
+	{
+	give _x;
+	};
+
+action getY takes ~ gives integer
+	{
+	give _y;
+	};
+
+};

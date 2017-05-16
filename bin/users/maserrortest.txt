@@ -1,0 +1,39 @@
+use dusty_widget.txt;
+
+declare things widgets;
+
+thread
+   {
+   forever{
+   pause for 10 seconds; say "Separate Booyah";
+	};
+   };
+
+thread as Joe
+    {
+thread{
+	forever{
+	             pause for 7 seconds;
+	             say "We have created "+widgets:size+" things";
+	             };
+	};
+
+thread{
+	forever{
+	            grow widgets by 1;
+	            create Widget w;
+	            integer x is widgets:size; widgets:x is now w;
+		pause for .27 seconds;
+	             };
+	};
+
+thread{
+	forever{
+		pause for 9.3 seconds;
+		say "BOOYAH!";
+		};
+	};
+   };
+
+thread {pause for 76 seconds; kill Joe; say "Die Joe!";};
+

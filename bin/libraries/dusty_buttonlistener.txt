@@ -1,0 +1,14 @@
+
+allow Button;
+interface ButtonListener
+ {
+ /*this is a template, or like an 'abstract' class in Java.  You extend this, and over-ride its methods to accomplish actually doing something when the button tells you it has done something*/
+
+action buttonPressed takes string mssg, gives ~;
+action buttonPressed takes Button butt, gives ~;
+
+action listenToButton takes Button butt, gives ~;
+/*implement way to store all the buttons you listen to*/
+
+/* help can be found by emailing dustyscript-devel@lists.sourceforge.net */
+};

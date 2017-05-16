@@ -1,0 +1,96 @@
+use dusty_widget.txt;
+
+thing Frame extends Widget
+	{
+	yes_no debug is no;
+	string name is "";
+	yes_no close_on_exit is yes;
+	yes_no exit_on_close is no;
+	string java_class is "widget.DFrame";
+
+	declare Widget cnt;	
+		
+	action Frame takes String label, Widget content, yes_no coe gives ~
+		{
+		if (debug) {say "label=="+label+"::Frame:string,thing,yes_no";};
+
+		close_on_exit is now coe;
+		Frame using label, content;
+		};
+	
+	action Frame takes String label, Widget content gives ~
+		{
+		if (debug) {say "label=="+label+"::Frame:string,thing";};
+		connect jc to java_class;
+		hook "processMessage" to jc;
+		send "setlabel" to jc using label;
+		name is now label;
+		javaconnector j is content.getJavaConnector;
+		send j to jc;
+		cnt is now content;
+		if close_on_exit  {send "enable_close" to jc;} 
+			else {
+			     if(debug) {say "disabling close";};
+			     send "disable_close" to jc;
+			       };
+		};
+
+	action Frame takes String label gives ~
+		{
+		
+		if (debug) {say "label == "+label+"::Frame:string";};
+		create Widget nw using ~;
+		/*
+		create nonWidget nw using ~;
+		*/
+		Frame using label, nw;
+		};
+	action Frame takes ~ gives ~
+		{
+		Frame using "";
+		};
+
+	action processMessage takes String s gives ~
+		{
+		if s == "closing" 
+			{send "hide" to jc;
+			if exit_on_close == yes {System.exit;};
+			};
+		};
+	action getName takes ~ gives string
+		{
+		give name;
+		};
+
+	action getContents takes ~ gives Thing
+		{
+		give contents;
+		};
+
+	action setContents takes Widget t gives ~
+		{
+		cnt is now t;
+		javaconnector j is cnt.getJavaConnector;
+		send j to jc;
+		};
+
+	action setVisible takes yes_no yn, gives ~
+		{
+		if yn == yes {send "show" to jc;} else {send "hide" to jc;};
+		};
+
+	action setVisible takes ~ gives ~ {setVisible using yes;};
+
+	action setExitClose takes yes_no yn gives ~
+		{
+		if yn == yes {send "enable_close" to jc;}
+			else {send "disable_close" to jc;};
+		close_on_exit is now yn;
+		};
+
+	action setExitWithClose takes yes_no yn gives ~
+		{
+		exit_on_close is now yn;
+		};
+   };
+

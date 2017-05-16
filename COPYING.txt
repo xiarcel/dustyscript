@@ -1,0 +1,16 @@
+/*
+Dustyscript ("Programming for Children") version 1.0 is licensed under the GPL version 2.0...
+and Copyright 2-25-2002, David Scott Williams.
+
+All of your copying and distribution rights are explained in the file LICENSE.txt... (in the base directory, .\dustyscript1.0
+
+Also, please stop and look at CREDITS.txt
+	There have been alot of people who have contributed in a varied set of ways, and all their help is appreciated greatly... whether code-level or not.
+
+If you have any questions, contact the author at:
+
+xiarcel@users.sourceforge.net
+xiarcel@prodigy.net
+xiarcel@yahoo.com
+(one or all of the 3)
+*/

@@ -1,0 +1,84 @@
+use dusty_widget.txt;
+
+/*a TextArea is a multi-row/multi-column box for entering text, or for presenting it*/
+
+thing TextArea extends Widget
+	{
+	string text_value is ""; yes_no editable is yes;
+	string VO is "vertical_scrollbars_only";
+	string HO is "horizontal_scrollbars_only";
+	string BTH is "both_scrollbars";
+	string NON is "no_scrollbars";
+
+
+	action TextArea takes String text, integer r, integer c, String scrollbars gives ~
+		{
+		string sb is "";
+		if scrollbars == "vertical" {sb is now VO;};
+		if scrollbars == "horizontal" {sb is now HO;};
+		if scrollbars == "both" {sb is now BTH;};
+		if scrollbars == "none" {sb is now NON;};
+		if sb == "" {sb is now BTH;};
+
+		connect jc to "widget.DTextArea";
+		hook "setString" to jc;
+		send "setsize" to jc using r, c;
+		send sb to jc;
+		send "settext" to jc using text;
+		text_value is now text;
+		};
+
+	action TextArea takes string text, integer r, integer c gives ~
+		{
+		TextArea using text, r, c, "both";
+		};
+
+	action TextArea takes integer r, integer c gives ~
+		{
+		TextArea using "", r, c, "both";
+		};
+
+	action getText takes ~ gives string
+		{
+		send "sendtext" to jc;
+		give text_value;
+		};
+
+	action setString takes String s gives ~
+		{
+		text_value is now s;
+		};
+
+	action setText takes string s gives ~
+		{
+		send "settext" to jc using s;
+		};
+
+	action appendText takes String s gives ~
+		{
+		send "append" to jc using s;
+		};
+
+	action insertText takes integer where, string text gives ~
+		{
+		send "insert" to jc using text, where;
+		};
+
+	action setPointerAt takes integer i gives ~
+		{
+		send "setpointer" to jc using i;
+		};
+
+	action setEditable takes yes_no edit, gives ~
+		{
+		editable is now edit;
+		if edit == yes {send "is_editable" to jc;}
+			else {send "not_editable" to jc;};
+		};
+
+	action isEditable takes ~ gives yes_no
+		{
+		give editable;
+		};
+	
+    };

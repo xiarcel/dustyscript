@@ -1,0 +1,125 @@
+use dusty_widget.txt;
+use dusty_buttonlistener.txt;
+
+thing Button extends Widget
+  {
+  group listeners contains things;
+  yes_no enabled is yes;
+  String lab is ""; String name is "";
+
+
+action Button takes String label, gives ~
+ {
+  lab is now label;
+  Button;
+ };
+/*debug comment smack dab in the middle!*/
+action Button takes ButtonListener listen, string label, gives ~
+ {
+	grow listeners by 1;
+	integer y is listeners:size;
+	listeners:y is now listen;
+	lab is now label;
+ Button;
+};
+
+
+action Button takes ~ gives ~
+ {
+ connect jc to "widget.DButton";
+ hook "internalListener" to jc;
+ send "setlabel" to jc using lab;
+ };
+
+action setLabel takes string s gives ~
+{
+lab is now s;
+send "setlabel" to jc using lab;
+};
+
+action getLabel takes ~ gives string {give lab;};
+
+action internalListener takes string mssg, gives ~
+ { 
+ if mssg == "enabled" {enabled is now yes;};
+ if mssg == "disabled" {enabled is now no;};
+ if mssg == name {thread{processButtonListeners using mssg;};};
+ if mssg == "pressed" {thread{processButtonListeners using me;};};
+};
+
+action setEnabled takes yes_no e, gives ~
+ {
+ if e == yes {send "enable" to jc;} else {send "disable" to jc;};
+ };
+
+action isEnabled takes ~ gives yes_no
+ {
+ give enabled;
+ };
+
+action processButtonListeners takes string message, gives ~
+ {
+    count up using x from 1 through listeners:size
+	{
+	listeners[x].buttonPressed using message;
+	};
+ };
+
+action processButtonListeners takes Button but, gives ~
+{
+/*newly modified with positive count*/
+
+       count up using x from 1 through listeners:size
+	{
+	listeners[x].buttonPressed using but;
+	};
+
+};
+
+action addButtonListener takes ButtonListener bl, gives ~
+{
+	grow listeners by 1;
+	integer y is listeners:size;
+	listeners:y is now bl;
+
+};
+
+action removeButtonListener takes ButtonListener bl, gives ~
+{
+
+    group nw contains things;
+    count using x from 1 through listeners:size
+	{
+	if listeners:x == bl
+		{/*do nothing*/}
+		else
+		   {
+		   grow nw by 1;
+		   integer sz is nw:size;
+	                    nw:sz is now listeners:x;
+		   };
+	};
+	listeners is now nw;
+
+};
+
+action setButtonName takes string nm, gives ~
+{
+ send "setactionname" to jc using nm;
+ name is now nm;
+};
+
+action getButtonName takes ~ gives string
+{
+ give name;
+};
+
+action pressButton takes ~ gives ~
+{
+ send "press" to jc;
+};
+
+};
+
+		
+ 

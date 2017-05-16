@@ -1,0 +1,34 @@
+use dusty_widget.txt;
+
+interface EventListener {
+	
+	action processEvent takes string event_string gives ~;
+	
+	};
+	
+thing EventAdapter extends Widget implements EventListener{
+	allow EventAdapter;
+	string java_class is "widget.DEventListener";
+	declare string event_type;
+	declare EventAdapters listeners;
+	action EventAdapter takes character et, gives ~ {
+		event_type is now ""+et;
+		connect jc to java_class;
+		hook "processEvent" to jc;
+		};
+	
+
+	action processEvent takes string s gives ~ {
+	say s;
+	};
+	
+	action listenToWidget takes Widget w gives ~ {
+	javaconnector wjc is w.getJavaConnector;
+	
+	send wjc to jc using "listen" , event_type;
+	};
+	
+};
+	
+	
+		

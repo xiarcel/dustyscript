@@ -1,0 +1,21 @@
+use dusty_checkbox.txt;
+
+thing RadioButton extends Checkbox
+ {
+ action RadioButton takes string s, javaconnector j, yes_no state, gives ~
+ 	{
+	Checkbox using s, state;
+	send j to jc;
+	};
+
+ action RadioButton takes string s, thing t, yes_no state gives ~
+	{
+	if t is type CheckboxGroup
+		{
+		javaconnector j refers to t.getGroup;
+		RadioButton using s, j, state;
+		};
+	};
+
+/*end of radio-button*/
+};

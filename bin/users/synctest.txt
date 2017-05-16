@@ -1,0 +1,30 @@
+
+thing One
+{
+ action One takes ~ gives ~  {};
+
+ synchronized action WooWoo takes string s, gives ~ {say s+":WOO WOO";pause for 20 seconds;};
+ 
+ global {
+ 	synchronized action WooWooGlobal takes string s gives ~ {say s+":WOO WOO global";pause for 10 seconds;};
+	};
+
+};
+
+thing Two extends One 
+{
+ action Two takes ~ gives ~ {};
+};
+
+create One firstone;
+create Two two;
+create One secondone;
+
+thread {firstone.WooWoo using "firstone";};
+thread {firstone.WooWoo using "firstone, second time";};
+thread {two.WooWoo using "two";};
+thread {secondone.WooWoo using "secondone";};
+thread {firstone.WooWooGlobal using "firstone";};
+thread {two.WooWooGlobal using "two";};
+thread {secondone.WooWooGlobal using "secondone";};
+

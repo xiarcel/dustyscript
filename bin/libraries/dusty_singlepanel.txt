@@ -1,0 +1,62 @@
+use dusty_widget.txt;
+
+thing SinglePanel extends Widget{
+yes_no DEBUG is no; 
+declare Widget content;
+
+action SinglePanel takes ~ gives ~
+	{
+	connect jc to "widget.DSinglePanel";
+	};
+
+action SinglePanel takes Widget widge gives ~
+	{
+	SinglePanel;
+	if (DEBUG) {say "SinglePanel";};
+	initialize j;
+	j is now widge.getJavaConnector;
+	if (DEBUG) {say "javaconnector j is:"+j;};
+	if (DEBUG) {say "javaconnector jc (mine) is:"+jc;};
+	send j to jc;
+	content is now widge;
+	};
+
+action forceSize takes integer i, integer j gives ~
+	{
+	send "force_size" to jc using i, j;
+	};
+
+action setContents takes Widget widge gives ~
+	{
+		initialize wj;
+		wj is now widge.getJavaConnector;
+		if (DEBUG) 
+	{say "wj is:"+wj+" , jc is:"+jc+" , widge is:"+widge;};		
+		send wj to jc;
+		if (DEBUG) {say "sent wj to jc";};
+		content is now widge;
+	};
+
+
+action getContents takes ~ gives JavaConnector
+	{
+	if (DEBUG) {say "getContents ~, jc  called";};
+	javaconnector j is content.getJavaConnector;
+	give j;
+	};
+
+
+action setBackground takes String color gives ~
+	{
+	send "setcolor" to jc using color;
+	};
+
+action setBackground takes integer red, integer green, integer blue gives ~
+	{
+	/*color is set with integers between 0-255*/
+if ( (red >= 0) & (red <= 255) & (green >= 0) & (green <= 255) & (blue >= 0) & (blue <= 255) ) 
+	{send "setcolor" to jc using red, green, blue;};
+
+	};
+};
+

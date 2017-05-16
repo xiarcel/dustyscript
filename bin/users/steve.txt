@@ -1,0 +1,57 @@
+yes_no playing is yes;
+integer seed is 12312312312311221;
+yes_no DEBUG is no;
+
+
+group board contains 3 groups;
+count using y from 1 through 3 {
+  board:y contains 3 strings;
+  count using x from 1 through 3 {
+    board:y:x is now " ";
+  };
+};
+
+action showBoard takes ~ gives ~ {
+  count using y from 1 through 3 {
+    say board:y;
+  };
+  give ~;
+};
+
+
+action computerTurn takes ~ gives ~ {
+ say "Computer Turn!";
+  give ~;
+};
+
+as_long_as playing == yes
+{
+  integer x is 0;
+  integer y is 0;
+  say "The board looks like this:";
+  showBoard using ~;
+  say "Enter X position of your move (1-3): ";
+  x is now ask;
+  say "Enter Y position of your move (1-3): ";
+  y is now ask;
+	if y < 0 {playing is now no;};
+	if x < 0 {playing is now no;};
+
+  string oldValue is board:y:x;
+  
+  if DEBUG == yes
+	{
+  	say "oldValue == |"+oldValue+"|";
+	say "board:"+y+":"+x+" is |"+board:y:x+"|";
+	};
+ if playing == yes
+	{
+	 if oldValue != " " {
+	    say "You can't go there!  Someone's already played it."; }
+	 else {
+     		board:y:x is now "O";
+    		computerTurn using ~;
+  		};
+	};
+pause for 1 seconds;
+};

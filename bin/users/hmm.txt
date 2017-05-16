@@ -1,0 +1,12 @@
+
+group table contains 9 groups;
+count using x from 1 through 9 { table[x] contains 9 integers;};
+count using x from 1 through 9 { count using y from 1 through 9 {table:x:y is now (x*y) }; };
+action display takes ~ gives ~ { say "\t1\t2\t3\t4\t5\t6\t7\t8\t9"; count using x from 1 through 9 { string line is x + "\t"; count using y from 1 through 9 { line is now line + table:x:y + "\t"; }; say line;}; };
+
+action single_digit_multiply takes integer x, integer y, gives integer { declare integer RET; if ( (x > 9) | (x < 1) | (y > 9) | (y < 1) ) {say "Invalid entry (1-9)"; RET is now -1;} else { RET is now table:x:y};  give RET; };
+
+
+action multiply takes integer i, integer j gives ~ { integer k is single_digit_multiply using i, j; say k; };
+
+display;

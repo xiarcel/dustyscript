@@ -1,0 +1,353 @@
+
+/*this tells Dustyscript to allow Fraction as a valid thing-type while it is being defined*/
+allow Fraction;
+/*define Math constants*/
+
+/*decimal PI is (22/7);*/
+
+
+thing Math{
+
+/*Math library -- all global, called as "Math.action-name" 
+MATH will be bootstrapped by StatementProcessor when "dusty_system" is loaded
+*/
+
+
+global {
+
+
+action evenlyDivisible takes integer divisor, integer base gives integer {
+/*this gives either the other factor when using a given divisor (if it is
+evenly divisible) or 0 (if it is not) */
+
+integer other is 0;
+decimal b is base;
+integer div is (base / divisor);
+integer check is ( div * divisor );
+
+/*if the product of our two divisors is not the original, these are not divisors*/
+if (check == b) { other is now div; };
+give other;
+};
+
+
+action factors takes integer base, gives integers {
+group g contains integers;
+int factor is 2;
+int half = (base / 2);
+as long as factor is less than or equal to half
+  {
+   
+   integer ed is evenlyDivisible using factor, base;
+   if ( ed != 0 ) {
+	group grp contains 2 integers;
+	grp:1 is now ed;
+	grp:2 is now factor;
+	g is now factors using grp;
+                give;
+                };
+   factor++;
+ };
+if ( g:size == 0 ) { grow g by 1; g:1 is now base;};
+give g;
+};
+
+action factors takes integers i, gives integers {
+group f contains integers;
+
+pcount using x from 1 through i:size {
+      group red is factors using i:x;
+      pcount using y from 1 through red:size {
+		grow f by 1;
+		f:last is now red:y;
+		};
+	};
+if (f:size == 0) { grow f by 1; f:1 is now 1;};
+give f;
+};
+
+action reduce takes group num, group den gives ~ {
+
+pcount using x from 1 through num:size {
+
+	pcount using y from 1 through den:size {
+		if (num:x == den:y) 
+			{
+			removeFromGroup using num, x;
+			removeFromGroup using den, y;
+			reduce using num, den;
+			if (num:size == 0) 
+				{
+				grow num by 1; num:1 is now 1;
+				};
+			if (den:size == 0)
+				{
+				grow den by 1; den:1 is now 1;
+				};
+			give;
+			};
+		};
+	};
+};
+
+action inverseFraction takes Fraction f, gives Fraction {
+
+integer num is f.getDenominator;
+integer den is f.getNumerator;
+
+create Fraction rev using num, den;
+give rev;
+};
+
+};
+};
+
+/*FRACTION TYPE*/
+
+
+thing Fraction {
+allow Fraction;
+
+declare integer numerator;
+declare integer denominator;
+declare integer whole_part;
+declare integer reduced_numerator;
+
+action Fraction takes integer num, integer den, gives ~ {
+
+/*say "Fraction using int, int";*/
+
+if (den == 0 ) {fail with "DIVISION BY ZERO ERROR!";};
+denominator is now den;
+reduced_numerator is now num;
+
+/*for math involving fractions*/
+numerator is now num;
+whole_part is now 0;
+
+/*create whole portion representation*/
+as long as ( reduced_numerator >= denominator )
+	{
+	reduced_numerator is now reduced_numerator - denominator;
+	whole_part++;
+	};
+};
+
+action Fraction takes integer whole, gives ~ {
+
+Fraction using whole, 1;
+
+};
+
+action Fraction takes decimal d, gives ~ {
+/*say "Fraction:decimal";*/
+integer oom is fract_OOM using d;
+
+integer num is (d * oom);
+Fraction using num, oom;
+};
+
+action Fraction takes decimal d, decimal e, gives ~ {
+
+decimal f is (d/e);
+
+Fraction using f;
+};
+
+
+action Fraction takes Fraction f, gives ~ {
+numerator is now f.getNumerator;
+denominator is now f.getDenominator;
+reduced_numerator is now f.getFractionalNumerator;
+whole_part is now f.getWholePortion;
+};
+
+
+action fract_OOM takes decimal d gives integer {
+declare integer multiplier;
+
+string dec is "" + d;
+declare integer marker;
+
+count using x from 1 through dec:size {
+	if ( dec:x == '.' ) 
+		{
+		marker is now x;
+		/*break;*/
+		};
+	};
+
+/*length of fractional portion*/
+integer len is dec:size - marker; 
+
+multiplier is now 1;
+pcount using x from 1 through len {
+	multiplier is now (multiplier * 10);
+	};
+give multiplier;
+};
+ 
+action getNumerator takes ~ gives integer {
+give numerator;
+};
+
+action getFractionalNumerator takes ~ gives integer {
+give reduced_numerator;
+};
+
+action getDenominator takes ~ gives integer {
+give denominator;
+};
+
+action getWholePortion takes ~ gives integer {
+give whole_part;
+};
+
+action getFractionalPortion takes ~ gives Fraction {
+create Fraction f using reduced_numerator, denominator;
+give f;
+};
+
+action reduceFraction takes ~ gives thing {
+
+group numerators is Math.factors using numerator;
+group denominators is Math.factors using denominator;
+/*reduce fraction to smallest ratio*/
+Math.reduce using numerators, denominators;
+integer n is 1; integer d is 1;
+pcount using x from 1 through numerators:size
+	{
+	n is now (n * numerators:x );
+	};
+pcount using x from 1 through denominators:size
+	{
+	d is now (d * denominators:x );
+	};
+
+/*re-create self reduced*/
+Fraction using n, d;
+give me;
+};
+
+
+action add takes Fraction f gives Fraction {
+
+/*f.reduceFraction;*/
+
+integer fnumerator is f.getNumerator;
+integer fdenominator is f.getDenominator;
+
+integer common_denominator is (fdenominator * denominator);
+integer adjusted_numerator is (numerator * fdenominator);
+fnumerator is now (fnumerator * denominator);
+
+integer new_num is adjusted_numerator + fnumerator;
+Fraction using new_num, common_denominator;
+reduceFraction;
+give me;
+};
+ 
+action subtract takes Fraction f gives Fraction {
+
+integer fnumerator is f.getNumerator;
+integer fdenominator is f.getDenominator;
+
+integer common_denominator is (fdenominator * denominator);
+integer adjusted_numerator is (numerator * fdenominator);
+fnumerator is now (fnumerator * denominator);
+
+integer new_num is adjusted_numerator - fnumerator;
+Fraction using new_num, common_denominator;
+reduceFraction;
+give me;
+};
+
+
+action multiply_by takes Fraction f gives Fraction {
+integer num is f.getNumerator;
+integer den is f.getDenominator;
+integer newnum is (num * getNumerator);
+integer newden is (den * getDenominator);
+create Fraction nw using newnum, newden;
+give nw;
+};
+
+
+action multiplied_by takes decimal d gives Fraction 
+{
+create Fraction part using d;
+Fraction mb is now multiplied_by using part;
+give mb;
+};
+
+
+
+action multiplied_by takes Fraction f gives Fraction {
+integer fnu is f.getNumerator;
+integer fdu is f.getDenominator;
+integer new_num is (numerator * fnu);
+integer new_den is (denominator * fdu);
+create Fraction ret using new_num, new_den;
+ret.reduceFraction;
+give ret;
+};
+
+action divided_by takes decimal d gives Fraction
+{
+create Fraction fracd using d;
+Fraction hold is multiplied_by using [fracd.inverseFraction];
+give hold;
+};
+
+
+action divided_by takes Fraction f gives Fraction {
+Fraction mb is multiply_by using [f.inverseFraction];
+give mb;
+};
+
+global{
+action test takes ~ gives ~ 
+{
+dumpall;
+};
+};
+
+action inverseFraction takes ~ gives Fraction
+{
+/*profile Fraction;*/
+
+/*Fraction inv is Math.inverseFraction using me;
+*/
+say "Fraction.inverseFraction";
+create Fraction inv using [me.getDenominator], [me.getNumerator];
+
+give inv;
+};
+
+
+action toDecimal takes ~ gives decimal {
+decimal d is (numerator / denominator);
+give d;
+};
+
+action toString takes ~ gives string {
+string s is whole_part + " and "+reduced_numerator+"/"+denominator;
+give s;
+};
+
+
+action setValue takes Fraction f gives ~
+{
+setValue using [f.getNumerator], [f.getDenominator] ;
+};
+
+action setValue takes integer i, integer j, gives ~
+{
+Fraction using i, j;
+};
+
+
+};
+
+
+

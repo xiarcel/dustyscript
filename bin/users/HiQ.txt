@@ -1,0 +1,58 @@
+use dusty_widgetry.txt;
+use hiqpanel.txt;
+use hiqengine.txt;
+yes_no DEBUG is no;
+yes_no RUN_AS_ENDGAME is no;
+/*use the above var to set with 10 pegs left, for testing end-game section of code*/
+
+create HiQPanel gb;
+if (DEBUG) {say "HiQPanel created";};
+create BorderPanel bp;
+create BorderPanel nth;
+if (DEBUG) {say "BorderPanels created";};
+create Label somelabel using "This is the Hi-Q game";
+if (DEBUG) {say "Label created";};
+nth.addWidget using somelabel, "north";
+if (DEBUG) {say "passed nth.addWidget";};
+create Label frlab using "From:";
+create Label tolab using "To:";
+create BorderPanel _from;
+create BorderPanel _to;
+if (DEBUG) {say "Passed create BorderPanel(_from, _to)";};
+create TextField ftf using "    ";
+create TextField ttf using "    ";
+ftf.setText using "";
+ttf.setText using "";
+_from.addWidget using frlab, "west";
+_from.addWidget using ftf, "east";
+_to.addWidget using tolab, "west";
+_to.addWidget using ttf, "east";
+create Button move using "Press to move";
+create BorderPanel fromto;
+if (DEBUG) {say "Line 29: passed BorderPanel fromto";};
+fromto.addWidget using _from, "west";
+fromto.addWidget using _to, "east";
+fromto.addWidget using move, "south";
+
+nth.addWidget using fromto, "center";
+create Label response using "Responses from Hi-Q will go here!!";
+nth.addWidget using response, "south";
+if (DEBUG) {say "Passed addWidget (response)";};
+bp.addWidget using nth, "north";
+bp.addWidget using gb, "center";
+if (DEBUG) {say "Passed bp.addWidget(s)";};
+create Label otherlabel using "Enjoy the game!";
+bp.addWidget using otherlabel, "south";
+if (DEBUG) {say "passed bp.addWidget (otherlabel)";};
+
+create Frame f using "I am Hi-Q", bp;
+if (DEBUG) {say "passed Frame creation";};
+declare group g;
+g is now gb.getGameBoard;
+create hiqengine Engine using move, ftf, ttf, response, gb, g;
+if (RUN_AS_ENDGAME) {gb.createEndGame;};
+f.setExitWithClose using yes;
+f.setVisible;
+thread{Engine.play;};
+
+

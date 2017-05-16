@@ -1,0 +1,4 @@
+/*If you look in ConsoleDusty.java, <0>alt</0> through <20>alt</20> can be defined to configure the Console to your language as well. These would be embedded after <class></class> but before the </LANGNAME> tag.  */
+/*languages file*/
+
+<ENGLISH><CLASS>dscript.intl.LanguageConverter</CLASS></ENGLISH>

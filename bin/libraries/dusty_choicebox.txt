@@ -1,0 +1,44 @@
+/*choice-box*/
+use dusty_widget.txt;
+
+thing ChoiceBox extends Widget {
+
+declare string chosen;
+
+action ChoiceBox takes ~ gives ~ {
+	connect jc to "widget.DChoiceBox";
+	hook set_chosen to jc;
+	};
+	
+action ChoiceBox takes strings s gives ~ {
+	
+	ChoiceBox;
+	pcount using x from 1 through s:size {
+		send "add" to jc using s:x;
+		};
+	};
+	
+action set_chosen takes string s gives ~ {
+	chosen is now s;
+	};
+	
+
+action setSelected takes integer i gives ~ {
+	send "selectint" to jc using i;
+	};
+	
+action setSelected takes string s gives ~ {
+	send "select" to jc using s;
+	};
+	
+action getSelected takes ~ gives string {
+	send "getchoice" to jc;
+	give chosen;
+	};
+	
+};
+
+/*untested as of Dustyscript 1.0 Release Candidate A*/
+
+
+	

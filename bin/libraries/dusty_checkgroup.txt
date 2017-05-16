@@ -1,0 +1,16 @@
+/*this logically connects checkboxes so that they can become radio-buttons (either-or)*/
+
+thing CheckboxGroup
+{
+ initialize cbgrp;
+ action CheckboxGroup takes ~ gives ~
+	{
+	connect cbgrp to "widget.DCheckboxGroup";
+	};
+
+ action getGroup takes ~ gives javaconnector
+	{
+	give cbgrp;
+	};
+
+};

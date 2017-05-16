@@ -1,0 +1,45 @@
+
+/*this thing is unchecked as of yet... this will be checked in 1.0.RCx stress-testing*/
+
+use dusty_widget.txt;
+
+thing Checkbox extends Widget
+ {
+ yes_no cbstate is no;
+ action Checkbox takes String s gives ~
+	{
+	Checkbox;
+	send "setlabel" to jc using s;
+	send "setstate" to jc using cbstate;
+	};
+
+ action Checkbox takes String s, yes_no state, gives ~
+	{
+	cbstate is now state;
+	Checkbox using s;
+	};
+
+
+ action Checkbox takes ~ gives ~
+	{
+	connect jc to "widget.DCheckbox";
+	hook processMessage to jc;
+	};
+
+ action processMessage takes string s gives ~
+	{
+	if s == "selected" {cbstate is now yes;};
+	if s == "deselected" {cbstate is now no;};
+	};
+
+action getState takes ~ gives yes_no
+	{
+	give cbstate;
+	};
+
+action setState takes yes_no state gives ~
+	{
+	send "setstate" to jc using state;
+	};
+
+};

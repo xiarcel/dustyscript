@@ -1,0 +1,24 @@
+yes_no go is yes;
+
+action timer takes integer i, string s, gives ~ 
+	{
+	
+	run separately{
+		      as long as go == yes
+		      {
+		   
+		      pause for i seconds;
+		      say s;
+		      
+		      };
+		     
+		     };
+	say "started timer";
+	give ~;
+	};
+
+action stop takes yes_no yn, gives ~ 
+		{go is now no;
+		say "go set to "+go;
+		give ~;
+		         };

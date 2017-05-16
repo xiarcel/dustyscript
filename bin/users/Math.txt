@@ -1,0 +1,67 @@
+
+/*define Math constants*/
+
+decimal PI is (22/7);
+
+thing Math{
+
+/*Math library*/
+
+global {
+
+
+action evenlyDivisible takes integer divisor, integer base gives integer {
+/*this gives either the other factor when using a given divisor (if it is
+evenly divisible) or 0 (if it is not) */
+
+integer other is 0;
+decimal b is base;
+integer div is (base / divisor);
+/*
+say "base is "+base;
+say "divisor is "+divisor;
+say "b is "+b;
+say "div is "+div;
+*/
+integer check is ( div * divisor );
+if (check == b) { other is now div; };
+give other;
+};
+
+action factors takes integer base, gives integers {
+group g contains integers;
+int factor is 1;
+int half = (base / 2);
+as long as factor is less than or equal to base
+  {
+   if (factor == base ) { grow g by 1; g:last is now base; give;};
+
+	integer ed is evenlyDivisible using factor;
+   if ( ed != 0 ) {
+	grow g by 1; g:last is now factor;
+	grow g by 1; g:last is now ed;
+                give;
+                };
+   factor++;
+ }
+g is now factors using g;
+give g;
+};
+
+action factors takes integers i, gives integers {
+group f contain integers;
+
+pcount using x from 1 through f:size {
+      group red is factors using i:x;
+      pcount using x from 1 through red:size {
+		grow f by 1;
+		f:last is now i:x;
+		};
+	};
+if (f:size == 0) { grow f by 1; f:1 is now 1;};
+give f;
+};
+
+};
+};
+

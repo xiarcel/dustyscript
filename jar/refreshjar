@@ -1,0 +1,19 @@
+#!/bin/sh
+FILE_LIST="./dscript ./network ./widget"
+
+cp -rf ../bin/dscript ./
+cp -rf ../bin/network ./
+cp -rf ../bin/widget ./
+if [ -d ../bin/org ] ; then
+	cp -rf ../bin/org ./
+	FILE_LIST="$FILE_LIST ./org"
+fi
+
+echo 'refreshed';
+jar -cvf dustyscript.jar $FILE_LIST 
+
+echo 'jarred!';
+rm -rf ./dscript ./network ./widget ./org
+echo 'removed working dirs';
+
+

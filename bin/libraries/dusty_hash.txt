@@ -1,0 +1,140 @@
+use dusty_system.txt;
+/*System is mainly for DustyHash type, regular Hashmap doesn't need it*/
+
+thing HashMap {
+
+declare anyvar PUT;
+declare anyvar PUTKEY;
+declare anyvar GET;
+declare anyvar GETKEY; 
+declare anyvar CONTAINSKEY;
+
+declare group KEYS;
+declare group VALUES;
+
+integer SIZE is 0;
+
+yes_no locked is no;
+yes_no cont_locked is no;
+/*collides with keyword
+yes_no CONTAINS is no;
+*/
+yes_no CONTAIN is no;
+initialize jc;
+
+action HashMap takes ~ gives ~ {
+	connect jc to "dscript.connect.DustyHashMap";
+	sendvar me to jc;
+	};
+	
+action put takes anyvar key, anyvar value, gives ~ {
+	as long as locked == yes {pause for 1 second;};
+	locked is now yes;
+	PUTKEY is now key;
+	PUT is now value;
+	send "put" to jc;
+	locked is now no;
+	};
+
+action getPut takes ~ gives anyvar{
+	/*say "getPut called";*/
+	anyvar GIV is PUT;
+	untype PUT;
+	give GIV;
+	};
+	
+action getPutKey takes ~ gives anyvar{
+	/*say "getPutKey called";*/
+	give PUTKEY;
+	};
+	
+	
+action get takes anyvar key gives anyvar {
+	as long as locked == yes {pause for 1 second;};
+	locked is now yes;
+	GETKEY is now key;
+	send "get" to jc;
+	anyvar ret is GET;
+	locked is now no;
+	give ret;
+	};
+	
+action getGetKey takes ~ gives anyvar{
+	give GETKEY;
+	};
+	
+action int_setGet takes anyvar a gives ~ {
+	GET is now a;
+	};
+
+action int_setContains takes yes_no c gives ~
+	{
+	CONTAIN is now c;
+	};
+
+action getContainsKey takes ~ gives anyvar
+	{
+	give CONTAINSKEY;
+	};
+	
+action containsKey takes anyvar a, gives yes_no {
+	as long as cont_locked == yes {pause for 1 second;};
+	cont_locked is now yes;
+	CONTAINSKEY is now a;
+	send "contains" to jc;
+	cont_locked is now no;
+	give CONTAIN;
+	};
+
+action clear takes ~ gives ~ {
+send "clear" to jc;
+};
+
+action int_setSize takes integer i gives ~
+{
+SIZE is now i;
+};
+
+action size takes ~ gives integer
+{
+send "size" to jc;
+give SIZE;
+};
+
+action values takes ~ gives group
+{
+send "setvalues" to jc;
+give VALUES;
+};
+
+action keys takes ~ gives group
+{
+send "setkeys" to jc;
+give KEYS;
+};
+
+action int_setValues takes group g gives ~ {
+VALUES is now g;
+};
+
+action int_setKeys takes group g gives ~ {
+KEYS is now g;
+};
+
+action remove takes anyvar key gives ~
+{
+sendvar key to jc using "remove";
+};
+
+action printHash takes ~ gives ~
+{
+keys;
+values;
+count using x from 1 through KEYS:size
+ 	{
+	say "KEY("+x+"):"+KEYS:x+"->"+VALUE("+x+"):"+VALUES:x;
+	};
+};
+
+};
+

@@ -1,0 +1,287 @@
+/*this thing represents a dustyscript program's interraction with its System environment.  Certain constants are set at runtime.  Currently, support for:
+	file separator
+	user (base) directory
+	line separator
+	time (milliseconds) 
+*/
+
+use dusty_maths.txt;
+use dusty_hash.txt;
+interface thing {};
+thing System {
+
+global
+{
+group CAPITALS copies "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+group LOWERCASE copies "abcdefghijklmnopqrstuvwxyz";
+integer last_memory is 0;
+string file_sep is ""; string user_dir is ""; string line_sep is "";
+integer time is 0;
+string time_string is "";
+	
+connect jc to "dscript.connect.DustySystem";
+
+action int_setFile takes string s gives ~
+	{
+	/*no need to use this, it is set for you*/
+	file_sep is now s;
+	};
+
+action getFileSeparator takes ~ gives string
+	{
+	give file_sep;
+	};
+
+action int_setLine takes string s gives ~
+	{
+	/*no need to use this, it is done for you*/
+	line_sep is now s;
+	};
+
+action getLineSeparator takes ~ gives string
+	{
+	give line_sep;
+	};
+
+action int_setBase takes string s gives ~
+	{ 
+	/*no need to use this, it is done for you*/
+	user_dir is now s;
+	};
+
+action getBaseDirectory takes ~ gives string
+	{
+	give user_dir;	
+	};
+
+action int_setTime takes string s gives ~
+	{
+	/*no need to do this, it is done for you*/
+	time is now s; time_string is now s;
+	};
+
+
+action getTime takes ~ gives integer
+	{
+	send "settime" to jc;
+	give time;
+	};
+
+
+/*when you call getTime multiple times, and want to find out how long it has been since, you call one of the following three 'Elapsed' actions*/
+
+action secondsElapsed takes integer start, integer end, gives decimal
+	{
+	decimal d is ((end-start)/1000);
+	give d;
+	};
+
+action minutesElapsed takes integer start, integer end, gives decimal
+	{
+	decimal d is ((end-start)/60000);
+	give d;
+	};
+
+action hoursElapsed takes integer start, integer end, gives decimal
+	{
+	decimal d is ((end-start)/3600000);
+	give d;
+	};
+
+action init takes ~ gives ~
+	{
+	hook "int_setFile" to jc;
+	send "setfile" to jc;
+	hook "int_setLine" to jc;
+	send "setline" to jc;
+	hook "int_setBase" to jc;
+	send "setuser" to jc;
+	hook "int_setTime" to jc;
+	};
+
+action toLowerCase takes string s gives string
+	{
+	getvar lower from jc using "tolower", s;
+	give lower;
+	};
+
+
+action toUpperCase takes string s gives string
+	{
+	getvar upper from jc using "toupper", s;
+	give upper;
+	};
+	
+action upperCaseInt takes character c gives integer 
+	{
+	integer ret is 0;
+
+	count using x from 1 through CAPITALS:size
+		{
+		
+		if c == CAPITALS:x
+			{ret is now x; give;};
+	
+		};
+	give ret;
+	
+	};
+	
+action lowerCaseInt takes character c gives integer
+	{
+	integer ret is 0;
+	count using x from 1 through LOWERCASE:size
+		{
+		if (c == LOWERCASE:x)
+			{ret is now x; give;};
+		};
+	give ret;
+	};
+	
+action equalsIgnoreCase takes string s, string t gives yes_no
+	{
+	yes_no eq is no;
+	s is now toLowerCase->s;
+	t is now toLowerCase->t;
+	if (s==t) {eq is now yes;};
+	give eq;
+	};
+
+action substringOf takes string s, integer start, integer end, gives string
+	{
+	string ret is "";
+	/*say "start:"+start+", end:"+end+", s:("+s+")";*/
+	if ((start > end) | (start < 1) | (start> s:size) | (end < 1) | (end > s:size)) {ret is now s; give;};
+	/*end--;*/
+		/*for now, substring (1,10) will include characters 1 through 10*/
+	/*say start+" through "+end;*/
+	count using x from start through end {
+		ret is now ret + s:x;
+		/*say ret;*/
+		};
+	give ret;
+	};
+
+action copyGroup takes group g, integer start, integer end, gives group
+	{
+	declare anyvars CPY; /*empty group of anyvars*/
+	if ((start < 1) | (start > g:size) | (start > end) | (end < 1) | (end > g:size)) {give;};
+	count using x from start through end
+		{
+		grow CPY by 1;
+		CPY:last is now g:x;
+		};
+	give CPY;
+	};
+
+action recoverMemory takes ~ gives ~
+	{
+	try{
+	int elap is getTime - last_memory;
+	if (elap < 60000) {give;};
+	last_memory is now elap;
+	/*say "recovering memory";*/
+	send "gc" to jc;
+		}
+		catch {/*do nothing*/};
+	};
+
+action lessThanChar takes ~ gives character
+	{
+	give '<';
+	};
+
+action greaterThanChar takes ~ gives character
+	{
+	give '>';
+	};
+
+	
+action createStartTag takes String s gives string
+	{
+	string m is '<'+s+'>';
+	give m;
+	};
+
+action createEndTag takes String s gives string
+	{
+	string m is "</"+s+">";
+	give m;
+	};
+	
+
+
+action getRandom takes ~ gives decimal {
+getvar db from jc using "random";
+give db;
+};
+
+action getRandomDecimal takes decimal start, decimal end gives decimal {
+decimal d is getRandom;
+decimal mult is end - start + 1;
+d is now (d*mult);
+d is now d + start;
+give d;
+};
+
+action getRandom takes integer start, integer end gives integer {
+decimal st is start; decimal en is end;
+decimal rnd is getRandomDecimal using st, en;
+integer rand is rnd;
+give rand;
+};
+
+action insertIntoGroup takes group grp, anyvar a, integer pos gives group {
+
+if ((pos < 1) | (pos > grp:size)) {fail with "Insert position out of bounds for group!";};
+
+grow grp by 1;
+integer inx is pos + 1;
+count using x from grp:size through inx {
+		grp:x is now grp[x-1];
+		};
+grp:pos is now a;
+give grp;
+};
+
+
+action exit takes ~ gives ~
+{
+send "exit" to jc;
+};
+
+
+action removeFromGroup takes group grp, integer pos gives anyvar {
+declare anyvar a;
+if ((pos < 1)|(pos > grp:size)) {fail with "Remove position out of bounds for group";};
+a is now grp:pos;
+integer inx is grp:size - 1;
+pcount using x from pos through inx {
+	grp:x is now grp[x+1];
+	};
+shrink grp by 1;
+give a;
+};
+
+
+action executeDustyscript takes string code gives ~ {
+send "execute" to jc using code;
+};
+
+/*WRAPPERS for math*/
+
+action factors takes integer i, gives group {
+group m is Math.factors using i;
+give m;
+};
+
+action reduce takes group num, group den, gives ~ {
+Math.reduce using num, den;
+};
+
+
+};
+
+};
+System.init;
+	

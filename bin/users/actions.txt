@@ -1,0 +1,18 @@
+
+string master is "Woo";
+say master;
+
+action getName takes String s gives String {give s;};
+
+action getName takes String s, integer i gives String {give s;};
+
+action setString takes string s, gives ~ {master is now s; give ~;};
+
+action looper takes ~ gives ~ {
+	character c is '\n';
+	thread{
+
+	as_long_as getName using master == "Woo" 
+		{say "!"+c;pause for 5 seconds;};
+	           };
+	};

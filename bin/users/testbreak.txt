@@ -1,0 +1,2 @@
+action testBreak takes ~ gives yes_no {yes_no yn is no; count using x from 1 through 10 {say x; if (x==5) {break;}; }; yn is now yes; give yn;};
+say testBreak;

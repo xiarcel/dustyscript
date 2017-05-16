@@ -1,0 +1,94 @@
+use dusty_widgetry.txt;
+
+
+thing GameBoard extends Widget
+ {
+string full is "-----";
+string empty is "     ";
+create Label lab using full;
+create SinglePanel box;
+yes_no gutter is no;
+yes_no empt is yes;
+yes_no DBG is no;
+
+action GameBoard takes integer shading gives ~
+	{
+	if (DBG) {say "Gameboard:"+shading;};
+	string s is getShade using shading;
+	box.setContents using lab;
+	if (DBG){say "box.setContents using lab";};
+	box.setBackground using s;
+	if (DBG){say "box.setBackground using s";};
+	};
+
+action getShade takes integer i gives string
+	{
+	string ret is "";
+	yes_no set is no;
+	ret is now "black";
+	if (i == 1) {ret is now "white"; set is now yes;};
+	if (i == 2) {ret is now "gray"; set is now yes;};
+	if (i > 0) {gutter is now no;}
+		else {gutter is now yes;};
+
+	give ret;
+	};
+
+
+action getJavaConnector takes ~ gives JavaConnector
+	{
+	
+	javaconnector j is box.getJavaConnector;
+	give j;
+	};
+
+action addPeg takes ~ gives ~
+	{
+	if (-gutter) {lab.setText using "peg";
+		empt is now no;
+		};
+	};
+
+action isGutter takes ~ gives yes_no
+	{
+	give gutter;
+	};
+
+action removePeg takes ~ gives ~
+	{
+	if (-gutter) {lab.setText using empty;
+		empt is now yes;};
+	};
+	
+action isEmpty takes ~ gives yes_no
+	{
+	give empt;
+	};
+
+action getBox takes ~ gives thing
+	{
+	give box;
+	};
+
+
+};
+		
+thing Gutter extends GameBoard
+{
+
+action Gutter takes ~ gives ~
+	{
+	GameBoard using 0;
+	};
+
+action isGutter takes ~ gives yes_no
+	{
+	give yes;
+	};
+
+action isEmpty takes ~ gives yes_no
+	{
+	give yes;
+	};
+};
+		

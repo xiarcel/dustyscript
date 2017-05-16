@@ -1,0 +1,59 @@
+use dusty_widgetry.txt;
+
+create Button b using "I am button one";
+create Button c using "I am button two";
+
+/*a comment for the hell of it*/
+
+thing MyButtonListener extends ButtonListener
+	{
+	action MyButtonListener takes ~ gives ~ {};
+	
+	action buttonPressed takes thing t, gives ~
+	      {
+		if listened:size > 0
+		{
+		count using x from 1 through listened:size
+			{
+			if listened:x == t {say "Button # "+x+" was pressed";};
+			};
+		};
+	     };
+};
+
+create MyButtonListener mbl using ~;
+mbl.listenToButton using b;
+mbl.listenToButton using c;
+
+b.pressButton; pause for 1 second;
+c.pressButton; pause for 1 second;
+say "booyah!";
+
+
+create GridPanel gp using 2, 1;
+gp.addWidget using b;
+gp.addWidget using c;
+create BorderPanel bpone using ~;
+create TextArea ta using 10, 10;
+say "created textarea";
+ta.setText using "This is some text..write for about one minute...and then your text will transfer to the dustyscript program";
+say "settext in ta";
+
+bpone.addWidget using gp, "north";
+say "added grid to border";
+
+bpone.addWidget using ta, "south";
+say "added ta to border";
+
+create Frame f using "Frame for Dustyscript Widget Test", bpone;
+f.setExitClose using yes;
+
+say "created frame";
+f.setVisible using yes;
+say "f visible";
+thread {pause for 1 minute; say "I will get the text"; say ta.getText using ~; };
+
+/* end with a comment for the hell of it  */
+
+
+		

@@ -1,0 +1,32 @@
+use dusty_widget.txt;
+
+thing Label extends Widget
+	{
+	yes_no DBG is yes;
+	String label is "";
+	action Label takes ~ gives ~
+		{
+		connect jc to "widget.DLabel";
+		send "setlabel" to jc using label;
+		};
+
+	action Label takes string s, gives ~
+		{
+		label is now s;
+		Label;
+		
+		};
+
+	action setText takes string s, gives ~
+		{
+		label is now s;
+		send "setlabel" to jc using label;
+		};
+
+	action getText takes ~ gives string
+		{
+		give label;
+		};
+
+/*end of label*/
+};

@@ -1,0 +1,34 @@
+use dusty_widget.txt;
+use dusty_jwidgets/swing_menu.txt;
+
+
+thing SwingMenuBar extends Widget {
+
+	string java_class is "widget.swing.DJMenuBar";
+	
+	action SwingMenuBar takes ~ gives ~ {
+		connect jc to java_class;
+		};
+		
+	action setOpaque takes ~ gives ~ {
+		setOpaque using yes;
+		};
+
+	action setOpaque takes yes_no yn gives ~ {
+		if (yn == yes) {
+			send "opaque" to jc;
+			}
+			else
+				{
+				send "~opaque" to jc;
+				};
+			};
+			
+	action addMenu takes SwingMenu sm gives ~ {
+		javaconnector val is sm.getJavaConnector;
+		/*say "val=="+val;*/
+		send val to jc;
+		};
+	};
+	
+

@@ -1,0 +1,12 @@
+say "Welcome to the program called 'Tellme'";
+say "I will repeat whatever you say to me, until you say ':quit'";
+yes_no repeat is yes;
+
+as long as repeat is equal to yes 
+	{
+	 say "What do you want me to repeat?";
+  	 string s is ask;
+	 if s does not equal ":quit" {say s; say "";} else {repeat is now no;};
+	 if s is equal to ":quit" {say "Ok..I'll stop repeating you";};
+	};
+

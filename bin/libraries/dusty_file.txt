@@ -1,0 +1,43 @@
+
+thing File {
+
+declare string name;
+initialize jc;
+yes_no writeable is no;
+yes_no directory is no;
+declare string CONTENTS;
+
+
+action File takes string s, gives ~
+{
+name is now s;
+connect jc to "dscript.connect.DFile";
+hook "int_readFile" to jc;
+send "setfile" to jc using name;
+};
+
+
+action int_readFile takes string s gives ~
+{
+CONTENTS is now s;
+};
+
+
+action readFile takes ~ gives string
+{
+send "read" to jc;
+give CONTENTS;
+};
+
+action writeFile takes string s gives ~
+{
+send "write" to jc using s;
+};
+
+action getFileName takes ~ gives string
+{
+give name;
+};
+
+};
+

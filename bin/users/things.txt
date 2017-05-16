@@ -1,0 +1,24 @@
+
+thing type Tom {
+String name is "";
+action Tom takes String s gives ~{
+	name is now s;
+	say "In string constructor";
+	};
+
+action Tom takes integer i, String s gives ~{
+	name is now s+":"+i;
+	say "In int:string constructor";
+	};
+
+action getName takes ~ gives string {
+	give name;
+	};
+};
+
+thing type Tomson adds to Tom {
+say "In Tomson's thing-type construction";
+
+action Tomson takes string s, gives ~ {say "In Tomson's string constructor"; name is now "Tomson:"+s;};
+};
+

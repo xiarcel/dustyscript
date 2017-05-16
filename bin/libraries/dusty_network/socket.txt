@@ -1,0 +1,59 @@
+
+interface SocketListener {
+action processRead takes string s gives ~ ;
+};
+
+
+allow SocketListener;
+
+thing Socket implements SocketListener {
+
+declare String host;
+declare String port;
+initialize jc;
+declare String current_line;
+declare SocketListener socket_listener;
+
+action Socket takes String h, String p gives ~ {
+ connect jc to "network.DSocket";
+ if ( me is type SocketListener ) { say "I am a SocketListener";};
+ host is now h;
+ send "setaddress" to jc using host;
+ port is now p;
+ send "setport" to jc using port;
+ hook processRead to jc;
+ setSocketListener using me;
+ send "init" to jc;
+ };
+
+action write takes String s gives ~ {
+ send "write" to jc using s;
+ };
+
+synchronized action readLine takes ~ gives String {
+ send "read" to jc;
+ give current_line;
+};
+
+action processRead takes string str gives ~ {
+ 
+ current_line is now str;
+ if (socket_listener != me ) {
+	socket_listener.processRead using current_line;
+	};
+};
+
+action setSocketListener takes SocketListener sl gives ~ {
+if ( sl is type SocketListener ) {
+	say "sl is type SocketListener";
+	};
+
+if (socket_listener is type SocketListener) {
+	say "socket_listener is type SocketListener";
+	};
+
+socket_listener is now sl;
+};
+
+};
+

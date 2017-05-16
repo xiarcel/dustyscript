@@ -1,0 +1,17 @@
+use anyvartest.txt;
+create AVTest avt;
+say avt;
+integer m is 200;
+decimal d is 20.22223;
+string s is "HAHAHAHA!";
+yes_no ya is yes;
+declare thing t;
+initialize jc;
+avt.takeAny using m;
+avt.takeAny using jc; avt.takeAny using ya; avt.takeAny using t; avt.takeAny using d; avt.takeAny using s;
+anyvar _in is avt.getAny using 1;
+anyvar _de is avt.getAny using 5;
+anyvar _jc is avt.getAny using 2;
+anyvar _ya is avt.getAny using 3;
+anyvar _tng is avt.getAny using 4;
+
