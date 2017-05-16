@@ -9,8 +9,14 @@ Also, please stop and look at CREDITS.txt
 
 If you have any questions, contact the author at:
 
+//THESE WERE HISTORICALLY THERE IN THE FILE, the last two definitely do not exist, and I am not sure where the first
+//one would wind up.
 xiarcel@users.sourceforge.net
 xiarcel@prodigy.net
 xiarcel@yahoo.com
 (one or all of the 3)
+AS OF MAY 2017:
+david@refactorings.net
+david.scott.williams.nc@gmail.com
+
 */
